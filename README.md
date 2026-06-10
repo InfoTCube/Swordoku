@@ -16,7 +16,7 @@ A real-time multiplayer Sudoku battle game. Race opponents to solve the same puz
 
 - Python 3.11+
 
-### Setup
+### First-time setup
 
 ```bash
 # Create and activate a virtual environment
@@ -27,8 +27,11 @@ venv\Scripts\activate        # Windows
 # Install dependencies
 pip install -e .
 
-# Copy env config and adjust if needed
+# Copy env config and fill in values
 cp .env.example .env
+
+# Create the database and run migrations
+alembic upgrade head
 ```
 
 ### Run the backend
