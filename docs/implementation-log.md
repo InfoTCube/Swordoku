@@ -6,7 +6,7 @@
 | 2 | Database schema & Alembic | ✅ Done | SQLAlchemy models (User, Puzzle, Match, MatchParticipant), core/config.py, core/database.py, Alembic init + first migration |
 | 3 | Auth endpoints | ✅ Done | POST /auth/register, POST /auth/login, get_current_user dep, UserCreate/UserOut/Token schemas, core/security.py JWT utils; bcrypt<4.0 pin for passlib compat |
 | 4 | Sudoku generator | ✅ Done | generate_solved_grid, make_puzzle, has_unique_solution in services/puzzle_generator.py; MRV backtracker, unique-solution check |
-| 5 | Difficulty classifier | ⬜ Todo | |
+| 5 | Difficulty classifier | ✅ Done | classify_difficulty in services/difficulty_classifier.py; naked/hidden singles simulation, inline candidate updates after each hidden single placement, thresholds aligned with generator ranges |
 | 6 | Puzzle API endpoint | ⬜ Todo | |
 | 7 | WebSocket connection manager | ⬜ Todo | |
 | 8 | Match service & WS flow | ⬜ Todo | |
