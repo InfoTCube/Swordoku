@@ -3,7 +3,7 @@
 | # | Title | Status | Notes |
 |---|---|---|---|
 | 1 | Project scaffold | ✅ Done | Backend layout, pyproject.toml, .env.example, .gitignore, health endpoint, frontend placeholder |
-| 2 | Database schema & Alembic | ⬜ Todo | |
+| 2 | Database schema & Alembic | ✅ Done | SQLAlchemy models (User, Puzzle, Match, MatchParticipant), core/config.py, core/database.py, Alembic init + first migration |
 | 3 | Auth endpoints | ⬜ Todo | |
 | 4 | Sudoku generator | ⬜ Todo | |
 | 5 | Difficulty classifier | ⬜ Todo | |
