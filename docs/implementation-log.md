@@ -4,7 +4,7 @@
 |---|---|---|---|
 | 1 | Project scaffold | ✅ Done | Backend layout, pyproject.toml, .env.example, .gitignore, health endpoint, frontend placeholder |
 | 2 | Database schema & Alembic | ✅ Done | SQLAlchemy models (User, Puzzle, Match, MatchParticipant), core/config.py, core/database.py, Alembic init + first migration |
-| 3 | Auth endpoints | ⬜ Todo | |
+| 3 | Auth endpoints | ✅ Done | POST /auth/register, POST /auth/login, get_current_user dep, UserCreate/UserOut/Token schemas, core/security.py JWT utils; bcrypt<4.0 pin for passlib compat |
 | 4 | Sudoku generator | ⬜ Todo | |
 | 5 | Difficulty classifier | ⬜ Todo | |
 | 6 | Puzzle API endpoint | ⬜ Todo | |
