@@ -9,7 +9,7 @@
 | 5 | Difficulty classifier | ✅ Done | classify_difficulty in services/difficulty_classifier.py; naked/hidden singles simulation, inline candidate updates after each hidden single placement, thresholds aligned with generator ranges |
 | 6 | Puzzle API endpoint | ✅ Done | POST /puzzles?difficulty=, GET /puzzles/{id}, PuzzleOut schema (no solution), auth required; actual difficulty re-classified from carved givens |
 | 7 | WebSocket connection manager | ✅ Done | ConnectionManager (connect/disconnect/broadcast_to_match), module-level singleton, WS /ws/match/{match_id} skeleton |
-| 8 | Match service & WS flow | ⬜ Todo | |
+| 8 | Match service & WS flow | ✅ Done | POST /matches (auth required, puzzle existence check), WS /ws/match/{match_id} (token query param auth, board_state on connect, move relay + progress broadcast) |
 | 9 | Server-side move validation | ⬜ Todo | |
 | 10 | Win detection & ELO update | ⬜ Todo | |
 | 11 | Lobby service | ⬜ Todo | |
