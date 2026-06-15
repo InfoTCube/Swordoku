@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, func
+from sqlalchemy import DateTime, Enum, ForeignKey, Integer, JSON, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.core.database import Base
@@ -41,3 +41,4 @@ class MatchParticipant(Base):
     solve_time_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     elo_before: Mapped[int | None] = mapped_column(Integer, nullable=True)
     elo_after: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    board_state: Mapped[list] = mapped_column(JSON, nullable=False, default=lambda: [0] * 81)
