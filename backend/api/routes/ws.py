@@ -10,6 +10,7 @@ from backend.models.user import User
 from backend.schemas.match import MoveMessage, ProgressBroadcast
 from backend.services.connection_manager import manager
 from backend.services.match_service import get_match, upsert_participant
+from backend.services.move_validator import process_move
 
 router = APIRouter()
 
@@ -47,13 +48,19 @@ async def match_ws(
                 await websocket.send_json({"type": "error", "detail": "Invalid move format"})
                 continue
 
-            db.refresh(participant)
+            is_correct, rejection_reason = process_move(
+                db, puzzle, participant, move.cell, move.value
+            )
+
+            if rejection_reason is not None:
+                await websocket.send_json({"type": "error", "detail": rejection_reason})
+                continue
+
             broadcast = ProgressBroadcast(
                 user_id=user_id,
                 cells_correct=participant.cells_correct,
                 mistakes=participant.mistakes,
             )
-
             await manager.broadcast_to_match(match_id, broadcast.model_dump())
 
     except WebSocketDisconnect:
