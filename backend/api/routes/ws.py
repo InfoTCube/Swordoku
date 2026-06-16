@@ -7,10 +7,11 @@ from backend.core.database import get_db
 from backend.core.security import decode_access_token
 from backend.models.puzzle import Puzzle
 from backend.models.user import User
-from backend.schemas.match import MoveMessage, ProgressBroadcast
+from backend.schemas.match import MatchEndBroadcast, MoveMessage, ProgressBroadcast
 from backend.services.connection_manager import manager
-from backend.services.match_service import get_match, upsert_participant
+from backend.services.match_service import get_match, get_participants, upsert_participant
 from backend.services.move_validator import process_move
+from backend.services.win_detection import finalize_match, has_won
 
 router = APIRouter()
 
@@ -62,6 +63,15 @@ async def match_ws(
                 mistakes=participant.mistakes,
             )
             await manager.broadcast_to_match(match_id, broadcast.model_dump())
+
+            if match.status != "finished" and has_won(participant):
+                participants = get_participants(db, match_id)
+                winner = finalize_match(db, match, participants, reason="completed")
+                end_broadcast = MatchEndBroadcast(
+                    winner_id=winner.user_id if winner is not None else None,
+                    reason="completed",
+                )
+                await manager.broadcast_to_match(match_id, end_broadcast.model_dump())
 
     except WebSocketDisconnect:
         manager.disconnect(match_id, websocket)

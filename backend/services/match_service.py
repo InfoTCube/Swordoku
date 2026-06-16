@@ -26,6 +26,9 @@ def get_match(db: Session, match_id: str) -> Match | None:
 def get_participant(db: Session, match_id: str, user_id: str) -> MatchParticipant | None:
     return db.get(MatchParticipant, {"match_id": match_id, "user_id": user_id})
 
+def get_participants(db: Session, match_id: str) -> list[MatchParticipant]:
+    return db.query(MatchParticipant).filter(MatchParticipant.match_id == match_id).all()
+
 def upsert_participant(db: Session, match_id: str, user_id: str) -> MatchParticipant:
     participant = get_participant(db, match_id, user_id)
     if participant is None:
