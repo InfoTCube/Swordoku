@@ -13,7 +13,7 @@
 | 9 | Server-side move validation | ✅ Done | validate_move pure fn + process_move in services/move_validator.py; board_state JSON col on MatchParticipant; rejects given_cell/already_filled; increments cells_correct or mistakes; wired into WS handler |
 | 10 | Win detection & ELO update | ✅ Done | services/elo_service.py (calculate_elo, K=32, pure fn), services/win_detection.py (has_won at 81 cells_correct, rank_participants/determine_winner by cells_correct desc then mistakes asc, finalize_match persisting match status/ended_at/winner_id + user elo/wins/losses in one transaction); ranked matches with >2 participants use round-robin pairwise ELO averaged per player; wired into ws.py to trigger on win and broadcast existing MatchEndBroadcast schema; match_service.get_participants helper added |
 | 11 | Lobby service | ⬜ Todo | |
-| 12 | React project scaffold | ⬜ Todo | |
+| 12 | React project scaffold | ✅ Done | Vite + React 18 + TypeScript; React Router v6 with all routes (/,/login,/register,/lobby/:code,/game/:matchId,/profile/:username,/leaderboard); api.ts (Axios + JWT interceptor); ws.ts (WebSocket utility); AuthContext (token + currentUser in localStorage, login/logout); ProtectedRoute; Layout with nav; dev-server proxy to FastAPI :8000 |
 | 13 | Auth pages | ⬜ Todo | |
 | 14 | Home page | ⬜ Todo | |
 | 15 | Lobby waiting room page | ⬜ Todo | |
