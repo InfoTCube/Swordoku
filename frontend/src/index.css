@@ -250,3 +250,167 @@ a:hover { text-decoration: underline; }
   cursor: not-allowed;
   opacity: 0.5;
 }
+
+/* Lobby waiting room */
+.lobby-container {
+  max-width: 520px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.lobby-card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.lobby-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.lobby-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.lobby-badge {
+  background: #f3f4f6;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  text-transform: capitalize;
+}
+
+.lobby-code {
+  font-size: 0.875rem;
+  color: #777;
+  margin-left: auto;
+  font-family: monospace;
+}
+
+.lobby-invite {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #f9fafb;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 0.625rem 0.875rem;
+}
+
+.lobby-invite-url {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: #555;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lobby-copy-btn {
+  flex-shrink: 0;
+  background: #111;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.lobby-copy-btn:hover { opacity: 0.85; }
+
+.lobby-section-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.lobby-player-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lobby-player-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.lobby-player-name { flex: 1; }
+
+.lobby-creator-badge {
+  background: #fef9c3;
+  border: 1px solid #fde047;
+  border-radius: 4px;
+  color: #713f12;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+}
+
+.lobby-start-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lobby-start-btn {
+  background: #111;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.65rem;
+  transition: opacity 0.15s;
+}
+
+.lobby-start-btn:hover:not(:disabled) { opacity: 0.85; }
+
+.lobby-start-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.lobby-hint {
+  color: #777;
+  font-size: 0.875rem;
+}
+
+.lobby-waiting-msg {
+  text-align: center;
+  font-style: italic;
+}
+
+.lobby-error {
+  background: #fff0f0;
+  border: 1px solid #fca5a5;
+  border-radius: 4px;
+  color: #b91c1c;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.lobby-loading {
+  text-align: center;
+  color: #777;
+  padding: 2rem 0;
+}

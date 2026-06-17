@@ -16,7 +16,7 @@
 | 12 | React project scaffold | ✅ Done | Vite + React 18 + TypeScript; React Router v6 with all routes (/,/login,/register,/lobby/:code,/game/:matchId,/profile/:username,/leaderboard); api.ts (Axios + JWT interceptor); ws.ts (WebSocket utility); AuthContext (token + currentUser in localStorage, login/logout); ProtectedRoute; Layout with nav; dev-server proxy to FastAPI :8000 |
 | 13 | Auth pages | ✅ Done | /register (username+email+password, client validation, auto-login on success); /login (username+password, form-data to OAuth2 endpoint); inline API error display; redirect to / on success; links between pages; auth-* CSS classes in index.css |
 | 14 | Home page | ✅ Done | Two-card layout: "Create lobby" (mode + difficulty radio groups → POST /lobbies → redirect /lobby/:code) and "Join lobby" (code/URL input → redirect /lobby/:code); home-* CSS classes in index.css; ProtectedRoute already guards the route |
-| 15 | Lobby waiting room page | ⬜ Todo | |
+| 15 | Lobby waiting room page | ✅ Done | Polls GET /lobbies/{code} every 2s; auto-joins on mount; shows mode/difficulty/players/invite link (copy button); Start button for creator only (2+ players); redirects all clients to /game/:matchId when lobby goes active; FRONTEND_URL config added so invite_url points to the app |
 | 16 | Game board component | ⬜ Todo | |
 | 17 | Live opponent progress panel | ⬜ Todo | |
 | 18 | WebSocket game client | ⬜ Todo | |

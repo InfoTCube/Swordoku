@@ -18,6 +18,7 @@ class LobbyMemberOut(BaseModel):
 class LobbyOut(BaseModel):
     id: str
     code: str
+    creator_id: str
     invite_url: str
     mode: Literal["casual", "ranked"]
     difficulty: Literal["easy", "medium", "hard"]

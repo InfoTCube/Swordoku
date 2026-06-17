@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from backend.core.config import settings
 from backend.core.database import get_db
 from backend.models.user import User
 from backend.schemas.lobby import LobbyCreate, LobbyMemberOut, LobbyOut, LobbyStartOut
@@ -16,7 +17,7 @@ from backend.services.lobby_service import (
 router = APIRouter(prefix="/lobbies", tags=["lobbies"])
 
 
-def _build_lobby_out(lobby, members, db: Session, request: Request) -> LobbyOut:
+def _build_lobby_out(lobby, members, db: Session) -> LobbyOut:
     players = []
     for m in members:
         user = db.get(User, m.user_id)
@@ -28,12 +29,12 @@ def _build_lobby_out(lobby, members, db: Session, request: Request) -> LobbyOut:
             )
         )
 
-    base = str(request.base_url).rstrip("/")
-    invite_url = f"{base}/lobby/{lobby.code}"
+    invite_url = f"{settings.FRONTEND_URL.rstrip('/')}/lobby/{lobby.code}"
 
     return LobbyOut(
         id=lobby.id,
         code=lobby.code,
+        creator_id=lobby.creator_id,
         invite_url=invite_url,
         mode=lobby.mode,
         difficulty=lobby.difficulty,
@@ -46,19 +47,17 @@ def _build_lobby_out(lobby, members, db: Session, request: Request) -> LobbyOut:
 @router.post("", response_model=LobbyOut, status_code=status.HTTP_201_CREATED)
 def create_lobby_endpoint(
     payload: LobbyCreate,
-    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> LobbyOut:
     lobby = create_lobby(db, current_user.id, payload.mode, payload.difficulty)
     members = get_lobby_members(db, lobby.id)
-    return _build_lobby_out(lobby, members, db, request)
+    return _build_lobby_out(lobby, members, db)
 
 
 @router.get("/{code}", response_model=LobbyOut)
 def get_lobby_endpoint(
     code: str,
-    request: Request,
     db: Session = Depends(get_db),
     _: User = Depends(get_current_user),
 ) -> LobbyOut:
@@ -66,13 +65,12 @@ def get_lobby_endpoint(
     if lobby is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lobby not found")
     members = get_lobby_members(db, lobby.id)
-    return _build_lobby_out(lobby, members, db, request)
+    return _build_lobby_out(lobby, members, db)
 
 
 @router.post("/{code}/join", response_model=LobbyOut)
 def join_lobby_endpoint(
     code: str,
-    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> LobbyOut:
@@ -81,7 +79,7 @@ def join_lobby_endpoint(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lobby not found")
     join_lobby(db, lobby, current_user.id)
     members = get_lobby_members(db, lobby.id)
-    return _build_lobby_out(lobby, members, db, request)
+    return _build_lobby_out(lobby, members, db)
 
 
 @router.post("/{code}/start", response_model=LobbyStartOut)
