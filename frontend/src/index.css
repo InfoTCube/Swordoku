@@ -414,3 +414,107 @@ a:hover { text-decoration: underline; }
   color: #777;
   padding: 2rem 0;
 }
+
+/* Game page */
+.game-container {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.game-header {
+  margin-bottom: 1.5rem;
+}
+
+.game-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.game-match-id {
+  color: #777;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.game-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.game-board-wrap {
+  flex-shrink: 0;
+}
+
+/* Sudoku board */
+.board {
+  display: inline-grid;
+  grid-template-columns: repeat(9, 52px);
+  border: 2px solid #111;
+  outline: none;
+  cursor: default;
+  user-select: none;
+}
+
+.board-cell {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  border-right: 1px solid #bbb;
+  border-bottom: 1px solid #bbb;
+  background: #fff;
+  color: #1a56db;
+  cursor: pointer;
+  transition: background 0.08s;
+}
+
+.board-cell:nth-child(9n) { border-right: none; }
+.board-cell:nth-last-child(-n+9) { border-bottom: none; }
+
+.board-cell--thick-right { border-right: 2px solid #374151; }
+.board-cell--thick-bottom { border-bottom: 2px solid #374151; }
+
+.board-cell--given {
+  color: #111;
+  font-weight: 700;
+  background: #f3f4f6;
+}
+
+.board-cell--selected {
+  background: #bfdbfe;
+}
+
+.board-cell--peer {
+  background: #eff6ff;
+}
+
+.board-cell--same-value {
+  background: #bfdbfe;
+}
+
+.board-cell--conflict {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.board-cell--incorrect {
+  color: #b91c1c;
+  background: #fecaca;
+}
+
+@media (max-width: 560px) {
+  .board {
+    grid-template-columns: repeat(9, 36px);
+  }
+
+  .board-cell {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9375rem;
+  }
+}
