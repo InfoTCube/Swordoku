@@ -6,17 +6,47 @@ A real-time multiplayer Sudoku battle game. Race opponents to solve the same puz
 
 - **Backend** — FastAPI, SQLAlchemy, Alembic, WebSockets
 - **Frontend** — React 18, TypeScript, Vite
-- **Database** — SQLite (dev) / PostgreSQL (prod)
+- **Database** — SQLite (dev) / PostgreSQL (prod via Docker)
 
-## Local Development
+---
 
-> Docker support is planned. Until then, run the backend directly.
+## Quick Start (Docker)
+
+**Prerequisites:** Docker Desktop running.
+
+```bash
+# 1. Copy env config (the defaults work fine for local Docker)
+cp .env.example .env
+
+# 2. Build and start all three services
+docker compose up --build
+```
+
+| Service | URL |
+|---|---|
+| App (frontend) | http://localhost |
+| API | http://localhost:8000 |
+| Interactive API docs | http://localhost:8000/docs |
+
+The backend automatically runs database migrations on startup.
+
+To stop and remove containers:
+
+```bash
+docker compose down          # keep the database volume
+docker compose down -v       # also wipe the database
+```
+
+---
+
+## Local Development (without Docker)
 
 ### Prerequisites
 
 - Python 3.11+
+- Node.js 20+
 
-### First-time setup
+### Backend
 
 ```bash
 # Create and activate a virtual environment
@@ -27,24 +57,29 @@ venv\Scripts\activate        # Windows
 # Install dependencies
 pip install -e .
 
-# Copy env config and fill in values
+# Copy env config
 cp .env.example .env
 
-# Create the database and run migrations
+# Run migrations and start the server
 alembic upgrade head
-```
-
-### Run the backend
-
-```bash
 uvicorn backend.main:app --reload
 ```
 
-API is available at `http://localhost:8000`.  
-Health check: `GET http://localhost:8000/health`  
-Interactive docs: `http://localhost:8000/docs`
+API available at `http://localhost:8000` — docs at `/docs`.
 
-### Run tests
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+App available at `http://localhost:5173` (proxies API calls to port 8000).
+
+---
+
+## Tests
 
 ```bash
 pip install -e ".[dev]"

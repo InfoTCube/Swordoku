@@ -23,6 +23,6 @@
 | 19 | Profile endpoint & page | ⬜ Todo | |
 | 20 | Leaderboard endpoint & page | ⬜ Todo | |
 | 21 | Unit test suite | ✅ Done | pytest suite in backend/tests/; 73 tests across 5 modules (puzzle_generator, elo_service, move_validator, auth_service, win_detection); in-memory SQLite fixture in conftest.py; [tool.pytest.ini_options] added to pyproject.toml |
-| 22 | Docker & docker-compose | ⬜ Todo | |
+| 22 | Docker & docker-compose | ✅ Done | backend/Dockerfile (python:3.11-slim, alembic upgrade head on startup), frontend/Dockerfile (multi-stage node→nginx, custom nginx.conf with API+WS proxy), docker-compose.yml (postgres:16 with healthcheck chain, pgdata volume, DATABASE_URL auto-overridden) |
 | 23 | Seed script & auto-migrations | ⬜ Todo | |
 | 24 | README & documentation | ⬜ Todo | |
