@@ -48,5 +48,7 @@ Interactive docs: `http://localhost:8000/docs`
 
 ```bash
 pip install -e ".[dev]"
-pytest backend/tests/
+pytest backend/tests/          # all tests
+pytest backend/tests/ -v       # verbose
+pytest backend/tests/ -x       # stop on first failure
 ```
