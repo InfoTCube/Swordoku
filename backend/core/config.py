@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     ENVIRONMENT: str = "development"
+    FRONTEND_URL: str = "http://localhost:5173"
 
     @model_validator(mode="after")
     def _require_secret_in_production(self) -> "Settings":
