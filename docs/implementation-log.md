@@ -15,7 +15,7 @@
 | 11 | Lobby service | ✅ Done | POST /lobbies, GET /lobbies/{code}, POST /lobbies/{code}/join, POST /lobbies/{code}/start; models Lobby+LobbyMember; services/lobby_service.py; api/routes/lobbies.py; alembic migration also backfills missing board_state column on match_participants |
 | 12 | React project scaffold | ✅ Done | Vite + React 18 + TypeScript; React Router v6 with all routes (/,/login,/register,/lobby/:code,/game/:matchId,/profile/:username,/leaderboard); api.ts (Axios + JWT interceptor); ws.ts (WebSocket utility); AuthContext (token + currentUser in localStorage, login/logout); ProtectedRoute; Layout with nav; dev-server proxy to FastAPI :8000 |
 | 13 | Auth pages | ✅ Done | /register (username+email+password, client validation, auto-login on success); /login (username+password, form-data to OAuth2 endpoint); inline API error display; redirect to / on success; links between pages; auth-* CSS classes in index.css |
-| 14 | Home page | ⬜ Todo | |
+| 14 | Home page | ✅ Done | Two-card layout: "Create lobby" (mode + difficulty radio groups → POST /lobbies → redirect /lobby/:code) and "Join lobby" (code/URL input → redirect /lobby/:code); home-* CSS classes in index.css; ProtectedRoute already guards the route |
 | 15 | Lobby waiting room page | ⬜ Todo | |
 | 16 | Game board component | ⬜ Todo | |
 | 17 | Live opponent progress panel | ⬜ Todo | |
