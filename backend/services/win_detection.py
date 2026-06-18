@@ -123,6 +123,12 @@ def finalize_match(
     match.ended_at = datetime.now(timezone.utc)
     match.winner_id = winner.user_id if winner is not None else None
 
+    if reason == "completed" and winner is not None and match.started_at is not None:
+        started = match.started_at
+        if started.tzinfo is None:
+            started = started.replace(tzinfo=timezone.utc)
+        winner.solve_time_ms = int((match.ended_at - started).total_seconds() * 1000)
+
     db.commit()
     db.refresh(match)
     for participant in participants:

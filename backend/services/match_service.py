@@ -4,12 +4,21 @@ from sqlalchemy.orm import Session
 
 from backend.models.match import Match, MatchParticipant
 
-def create_match(db: Session, puzzle_id: str, mode: str, creator_user_id: str) -> Match:
+def create_match(
+    db: Session,
+    puzzle_id: str,
+    mode: str,
+    creator_user_id: str,
+    time_limit_s: int = 600,
+    mistake_limit: int = 3,
+) -> Match:
     match = Match(
-        puzzle_id=puzzle_id, 
-        mode=mode, 
+        puzzle_id=puzzle_id,
+        mode=mode,
         status="active",
         started_at=datetime.now(timezone.utc),
+        time_limit_s=time_limit_s,
+        mistake_limit=mistake_limit,
     )
     db.add(match)
     db.flush() # get match.id before creating participant

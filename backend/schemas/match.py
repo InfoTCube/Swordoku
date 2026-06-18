@@ -17,6 +17,7 @@ class MatchOut(BaseModel):
     model_config = { "from_attributes": True }
 
 class MoveMessage(BaseModel):
+    type: Literal["move"] = "move"
     cell: Annotated[int, Field(ge=0, le=80)]
     value: Annotated[int, Field(ge=1, le=9)]
 
