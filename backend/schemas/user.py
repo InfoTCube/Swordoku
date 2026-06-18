@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -20,6 +20,27 @@ class UserOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class UserProfile(BaseModel):
+    username: str
+    elo_rating: int
+    wins: int
+    losses: int
+
+    model_config = {"from_attributes": True}
+
+
+class MatchHistoryEntry(BaseModel):
+    match_id: str
+    ended_at: datetime | None
+    mode: Literal["casual", "ranked"]
+    difficulty: str
+    result: Literal["win", "loss", "draw"]
+    opponents: list[str]
+    elo_delta: int | None
+    cells_correct: int
+    mistakes: int
 
 
 class Token(BaseModel):
