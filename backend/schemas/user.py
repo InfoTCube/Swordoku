@@ -39,6 +39,7 @@ class MatchHistoryEntry(BaseModel):
     result: Literal["win", "loss", "draw"]
     opponents: list[str]
     elo_delta: int | None
+    cells_given: int
     cells_correct: int
     mistakes: int
 

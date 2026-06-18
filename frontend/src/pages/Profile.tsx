@@ -17,6 +17,7 @@ interface MatchEntry {
   result: 'win' | 'loss' | 'draw'
   opponents: string[]
   elo_delta: number | null
+  cells_given: number
   cells_correct: number
   mistakes: number
 }
@@ -160,7 +161,7 @@ function MatchRow({ match: m }: { match: MatchEntry }) {
       <div className="profile-match-info">
         <span className="profile-match-vs">vs {opponentsStr}</span>
         <span className="profile-match-meta">
-          {m.difficulty} · {m.mode} · {m.cells_correct}/81 cells · {m.mistakes} mistakes
+          {m.difficulty} · {m.mode} · {m.cells_given + m.cells_correct}/81 cells · {m.mistakes} mistakes
         </span>
       </div>
 

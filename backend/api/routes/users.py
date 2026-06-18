@@ -78,6 +78,8 @@ def get_user_matches(
         if p.elo_before is not None and p.elo_after is not None:
             elo_delta = p.elo_after - p.elo_before
 
+        cells_given = sum(1 for v in puzzle.givens if v != 0)
+
         entries.append(
             MatchHistoryEntry(
                 match_id=match.id,
@@ -87,6 +89,7 @@ def get_user_matches(
                 result=result,
                 opponents=opponent_names,
                 elo_delta=elo_delta,
+                cells_given=cells_given,
                 cells_correct=p.cells_correct,
                 mistakes=p.mistakes,
             )
