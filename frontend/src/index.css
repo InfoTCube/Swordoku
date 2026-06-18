@@ -518,3 +518,95 @@ a:hover { text-decoration: underline; }
     font-size: 0.9375rem;
   }
 }
+
+/* Opponent progress panel */
+.opponent-panel {
+  min-width: 220px;
+  max-width: 300px;
+  flex: 1;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+}
+
+.opponent-panel-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.opponent-panel-empty {
+  color: #777;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.opponent-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.opponent-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.opponent-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.opponent-username {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  flex: 1;
+}
+
+.opponent-finished-badge {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  border-radius: 4px;
+  color: #15803d;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  white-space: nowrap;
+}
+
+.opponent-progress-bar-wrap {
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.opponent-progress-bar-fill {
+  height: 100%;
+  background: #111;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  min-width: 0%;
+  max-width: 100%;
+}
+
+.opponent-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: #555;
+}
+
+.opponent-mistakes {
+  color: #b91c1c;
+}
+
+@media (max-width: 760px) {
+  .opponent-panel {
+    max-width: 100%;
+  }
+}

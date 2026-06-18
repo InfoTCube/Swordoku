@@ -23,6 +23,7 @@ class MoveMessage(BaseModel):
 class ProgressBroadcast(BaseModel):
     type: Literal["progress"] = "progress"
     user_id: str
+    username: str
     cells_correct: int
     mistakes: int
 
