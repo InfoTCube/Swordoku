@@ -19,13 +19,13 @@ def _generate_code() -> str:
     return "".join(random.choices(chars, k=6))
 
 
-def create_lobby(db: Session, creator_id: str, mode: str, difficulty: str) -> Lobby:
+def create_lobby(db: Session, creator_id: str, mode: str, difficulty: str, time_limit_min: int = 10, mistake_limit: int = 3) -> Lobby:
     for _ in range(10):
         code = _generate_code()
         if not db.query(Lobby).filter(Lobby.code == code).first():
             break
 
-    lobby = Lobby(code=code, creator_id=creator_id, mode=mode, difficulty=difficulty)
+    lobby = Lobby(code=code, creator_id=creator_id, mode=mode, difficulty=difficulty, time_limit_min=time_limit_min, mistake_limit=mistake_limit)
     db.add(lobby)
     db.flush()
 
@@ -97,6 +97,8 @@ def start_lobby(db: Session, lobby: Lobby, requesting_user_id: str) -> str:
         puzzle_id=puzzle.id,
         mode=lobby.mode,
         status="active",
+        time_limit_s=lobby.time_limit_min * 60,
+        mistake_limit=lobby.mistake_limit,
         started_at=datetime.now(timezone.utc),
     )
     db.add(match)

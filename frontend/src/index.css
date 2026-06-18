@@ -265,6 +265,25 @@ a:hover { text-decoration: underline; }
   opacity: 0.5;
 }
 
+.home-range-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.home-range {
+  flex: 1;
+  accent-color: #111;
+}
+
+.home-range-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-width: 3.5rem;
+  text-align: right;
+}
+
 /* Lobby waiting room */
 .lobby-container {
   max-width: 520px;
