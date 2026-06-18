@@ -10,46 +10,49 @@ export interface ParticipantProgress {
 interface OpponentPanelProps {
   participants: ParticipantProgress[]
   blankCount?: number
+  self?: ParticipantProgress
 }
 
-export default function OpponentPanel({ participants, blankCount = 81 }: OpponentPanelProps) {
-  const givenCount = 81 - blankCount
+function ParticipantRow({ p, givenCount, isYou }: { p: ParticipantProgress; givenCount: number; isYou?: boolean }) {
+  const totalKnown = p.cellsCorrect + givenCount
+  return (
+    <li key={p.userId} className={`opponent-item${isYou ? ' opponent-item--self' : ''}`}>
+      <div className="opponent-header">
+        <span className="opponent-username">
+          {p.username}
+          {isYou && <span className="opponent-you-tag"> (You)</span>}
+        </span>
+        {p.finished && <span className="opponent-finished-badge">Finished!</span>}
+        {p.eliminated && !p.finished && <span className="opponent-eliminated-badge">Eliminated</span>}
+      </div>
+      <div className="opponent-progress-bar-wrap">
+        <div
+          className="opponent-progress-bar-fill"
+          style={{ width: `${(totalKnown / 81) * 100}%` }}
+        />
+      </div>
+      <div className="opponent-stats">
+        <span className="opponent-cells">{totalKnown} / 81 cells</span>
+        <span className="opponent-mistakes">{p.mistakes} mistake{p.mistakes !== 1 ? 's' : ''}</span>
+      </div>
+    </li>
+  )
+}
 
-  if (participants.length === 0) {
-    return (
-      <aside className="opponent-panel">
-        <h2 className="opponent-panel-title">Opponents</h2>
-        <p className="opponent-panel-empty">Waiting for opponents…</p>
-      </aside>
-    )
-  }
+export default function OpponentPanel({ participants, blankCount = 81, self }: OpponentPanelProps) {
+  const givenCount = 81 - blankCount
 
   return (
     <aside className="opponent-panel">
-      <h2 className="opponent-panel-title">Opponents</h2>
+      <h2 className="opponent-panel-title">Progress</h2>
       <ul className="opponent-list">
-        {participants.map((p) => {
-          const totalKnown = p.cellsCorrect + givenCount
-          return (
-            <li key={p.userId} className="opponent-item">
-              <div className="opponent-header">
-                <span className="opponent-username">{p.username}</span>
-                {p.finished && <span className="opponent-finished-badge">Finished!</span>}
-                {p.eliminated && !p.finished && <span className="opponent-eliminated-badge">Eliminated</span>}
-              </div>
-              <div className="opponent-progress-bar-wrap">
-                <div
-                  className="opponent-progress-bar-fill"
-                  style={{ width: `${(totalKnown / 81) * 100}%` }}
-                />
-              </div>
-              <div className="opponent-stats">
-                <span className="opponent-cells">{totalKnown} / 81 cells</span>
-                <span className="opponent-mistakes">{p.mistakes} mistake{p.mistakes !== 1 ? 's' : ''}</span>
-              </div>
-            </li>
-          )
-        })}
+        {self && <ParticipantRow p={self} givenCount={givenCount} isYou />}
+        {participants.length === 0 && !self && (
+          <p className="opponent-panel-empty">Waiting for opponents…</p>
+        )}
+        {participants.map((p) => (
+          <ParticipantRow key={p.userId} p={p} givenCount={givenCount} />
+        ))}
       </ul>
     </aside>
   )

@@ -463,6 +463,49 @@ a:hover { text-decoration: underline; }
 }
 
 /* Sudoku board */
+.board-with-pad {
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-start;
+}
+
+.number-pad {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  height: calc(9 * 52px + 4px);
+}
+
+.number-pad-btn {
+  flex: 1;
+  width: 44px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+  color: #1a56db;
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.08s, border-color 0.08s;
+  user-select: none;
+}
+
+.number-pad-btn:hover:not(:disabled) {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.number-pad-btn--exhausted {
+  color: #bbb;
+  background: #f3f4f6;
+  cursor: not-allowed;
+  border-color: #e5e5e5;
+}
+
 .board {
   display: inline-grid;
   grid-template-columns: repeat(9, 52px);
@@ -529,6 +572,15 @@ a:hover { text-decoration: underline; }
   .board-cell {
     width: 36px;
     height: 36px;
+    font-size: 0.9375rem;
+  }
+
+  .number-pad {
+    height: calc(9 * 36px + 4px);
+  }
+
+  .number-pad-btn {
+    width: 32px;
     font-size: 0.9375rem;
   }
 }
@@ -617,6 +669,17 @@ a:hover { text-decoration: underline; }
 
 .opponent-mistakes {
   color: #b91c1c;
+}
+
+.opponent-item--self {
+  border-left: 3px solid #1a56db;
+  padding-left: 0.5rem;
+}
+
+.opponent-you-tag {
+  color: #1a56db;
+  font-size: 0.8125rem;
+  font-weight: 400;
 }
 
 @media (max-width: 760px) {

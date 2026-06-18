@@ -201,13 +201,16 @@ export default function Game() {
   function handleCellChange(cell: number, value: number) {
     if (isSelfEliminated || correctCells.has(cell)) return
 
+    // Typing the same digit that's already in the cell clears it without a mistake
+    const effectiveValue = values[cell] === value ? 0 : value
+
     setValues(prev => {
       const next = [...prev]
-      next[cell] = value
+      next[cell] = effectiveValue
       return next
     })
 
-    if (value === 0) {
+    if (effectiveValue === 0) {
       setIncorrectCells(prev => {
         const next = new Set(prev)
         next.delete(cell)
@@ -216,7 +219,7 @@ export default function Game() {
       return
     }
 
-    connRef.current?.send({ cell, value })
+    connRef.current?.send({ cell, value: effectiveValue })
   }
 
   function getResult(): 'win' | 'loss' | 'draw' {
@@ -293,7 +296,18 @@ export default function Game() {
             onCellChange={handleCellChange}
           />
         </div>
-        <OpponentPanel participants={opponents} blankCount={blankCount} />
+        <OpponentPanel
+          participants={opponents}
+          blankCount={blankCount}
+          self={currentUser ? {
+            userId: currentUser.id,
+            username: currentUser.username,
+            cellsCorrect: correctCells.size,
+            mistakes: myMistakes,
+            finished: correctCells.size >= blankCount,
+            eliminated: isSelfEliminated,
+          } : undefined}
+        />
       </div>
     </div>
   )
