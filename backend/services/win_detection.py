@@ -10,8 +10,9 @@ from backend.services.elo_service import calculate_elo
 WIN_THRESHOLD = 81
 
 
-def has_won(participant: MatchParticipant) -> bool:
-    return participant.cells_correct >= WIN_THRESHOLD
+def has_won(participant: MatchParticipant, blank_count: int = WIN_THRESHOLD) -> bool:
+    """True when the player has correctly filled all blank cells in the puzzle."""
+    return participant.cells_correct >= blank_count
 
 
 def rank_participants(participants: list[MatchParticipant]) -> list[MatchParticipant]:
@@ -39,11 +40,18 @@ def _pairwise_result(a: MatchParticipant, b: MatchParticipant) -> float:
     return 0.5
 
 
-def _apply_elo(db: Session, participants: list[MatchParticipant]) -> None:
+def _apply_elo(
+    db: Session,
+    participants: list[MatchParticipant],
+    eliminated_user_ids: set[str] | None = None,
+) -> None:
     """
     Apply ELO updates for a ranked match. For matches with more than two
     participants, ratings are updated via round-robin pairwise comparisons
     and the resulting deltas are averaged per player.
+
+    Eliminated players automatically lose all their pairings regardless of
+    their cells_correct/mistakes performance.
     """
     users = {p.user_id: db.get(User, p.user_id) for p in participants}
     for p in participants:
@@ -51,7 +59,16 @@ def _apply_elo(db: Session, participants: list[MatchParticipant]) -> None:
 
     deltas: dict[str, list[int]] = {p.user_id: [] for p in participants}
     for a, b in combinations(participants, 2):
-        result_a = _pairwise_result(a, b)
+        a_elim = eliminated_user_ids and a.user_id in eliminated_user_ids
+        b_elim = eliminated_user_ids and b.user_id in eliminated_user_ids
+        if a_elim and b_elim:
+            result_a = 0.5
+        elif a_elim:
+            result_a = 0.0
+        elif b_elim:
+            result_a = 1.0
+        else:
+            result_a = _pairwise_result(a, b)
         new_a, new_b = calculate_elo(users[a.user_id].elo_rating, users[b.user_id].elo_rating, result_a)
         deltas[a.user_id].append(new_a - users[a.user_id].elo_rating)
         deltas[b.user_id].append(new_b - users[b.user_id].elo_rating)
@@ -67,18 +84,32 @@ def finalize_match(
     match: Match,
     participants: list[MatchParticipant],
     reason: str,
+    eliminated_user_ids: set[str] | None = None,
 ) -> MatchParticipant | None:
     """
     Resolve a finished match: rank participants, apply ELO for ranked
     matches, update win/loss records, and persist everything in a single
     transaction.
 
+    eliminated_user_ids: players excluded from winner consideration (e.g.
+    hit the mistake limit) but still included in ELO and win/loss updates.
+
     Returns the winning participant, or None on a draw.
     """
-    winner = determine_winner(participants)
+    eligible = (
+        [p for p in participants if p.user_id not in eliminated_user_ids]
+        if eliminated_user_ids else participants
+    )
+    if eligible:
+        winner = determine_winner(eligible)
+        elo_eliminated = eliminated_user_ids
+    else:
+        # All players eliminated: rank everyone by cells_correct with no bias
+        winner = determine_winner(participants)
+        elo_eliminated = None
 
     if match.mode == "ranked":
-        _apply_elo(db, participants)
+        _apply_elo(db, participants, elo_eliminated)
 
     if winner is not None:
         for participant in participants:

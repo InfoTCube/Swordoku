@@ -8,6 +8,10 @@ class ConnectionManager:
         await websocket.accept()
         self.active.setdefault(match_id, []).append(websocket)
 
+    def add_connection(self, match_id: str, websocket: WebSocket) -> None:
+        """Register an already-accepted WebSocket without calling accept() again."""
+        self.active.setdefault(match_id, []).append(websocket)
+
     def disconnect(self, match_id: str, websocket: WebSocket) -> None:
         conns = self.active.get(match_id, [])
         if websocket in conns:

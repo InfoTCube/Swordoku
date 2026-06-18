@@ -3,7 +3,7 @@ export type WsMessage = Record<string, unknown>
 export interface WsHandlers {
   onMessage: (data: WsMessage) => void
   onOpen?: () => void
-  onClose?: () => void
+  onClose?: (event: CloseEvent) => void
   onError?: (event: Event) => void
 }
 
@@ -18,7 +18,7 @@ export function connectToMatch(matchId: string, token: string, handlers: WsHandl
   const socket = new WebSocket(url)
 
   socket.onopen = () => handlers.onOpen?.()
-  socket.onclose = () => handlers.onClose?.()
+  socket.onclose = (e) => handlers.onClose?.(e)
   socket.onerror = (e) => handlers.onError?.(e)
   socket.onmessage = (event) => {
     try {

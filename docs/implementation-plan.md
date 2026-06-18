@@ -342,10 +342,13 @@ Wire the game page together: board + opponent panel + WebSocket.
 **Deliverables:**
 - Connect to `WS /ws/match/{matchId}` on `/game/:matchId` mount; disconnect on unmount
 - Send `{cell, value}` on `onCellChange`
+- Add both cells filled and cells given to cells known so you can achive 81/81
 - Dispatch `progress` messages to opponent panel state
 - Dispatch `match_end` message → show result overlay (Win / Lose / Draw, ELO delta for ranked)
 - Timer countdown display
+- Error counter display and eliminate player on 10 errors commited
 - Handle WS disconnect: show reconnecting indicator
+- Do not allow player to join match after it started - link redirects to home and shows msg that game already started
 
 **Blocked by:** #8, #16, #17
 
