@@ -12,7 +12,8 @@ RUN pip install --no-cache-dir .
 COPY alembic.ini ./
 COPY alembic/ alembic/
 COPY backend/ backend/
+COPY scripts/ scripts/
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "alembic upgrade head && uvicorn backend.main:app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "alembic upgrade head && python scripts/seed.py && uvicorn backend.main:app --host 0.0.0.0 --port 8000"]
