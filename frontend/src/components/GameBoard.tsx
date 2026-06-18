@@ -4,6 +4,7 @@ export interface GameBoardProps {
   givens: number[]
   values: number[]
   incorrectCells?: Set<number>
+  correctCells?: Set<number>
   onCellChange: (cell: number, value: number) => void
 }
 
@@ -45,6 +46,7 @@ export default function GameBoard({
   givens,
   values,
   incorrectCells = new Set(),
+  correctCells = new Set(),
   onCellChange,
 }: GameBoardProps) {
   const [selected, setSelected] = useState<number | null>(null)
@@ -57,7 +59,7 @@ export default function GameBoard({
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (selected === null) return
 
-    if (givens[selected] === 0) {
+    if (givens[selected] === 0 && !correctCells.has(selected)) {
       if (e.key >= '1' && e.key <= '9') {
         e.preventDefault()
         onCellChange(selected, parseInt(e.key))
@@ -89,6 +91,7 @@ export default function GameBoard({
         const r = getRow(i)
         const c = getCol(i)
         const isGiven = givens[i] !== 0
+        const isCorrect = !isGiven && correctCells.has(i)
         const isSelected = selected === i
         const isPeer = !isSelected && peers.has(i)
         const isSameVal = !isSelected && selectedVal !== 0 && display[i] === selectedVal
@@ -98,6 +101,7 @@ export default function GameBoard({
         const cls = [
           'board-cell',
           isGiven && 'board-cell--given',
+          isCorrect && 'board-cell--correct',
           isSelected && 'board-cell--selected',
           isPeer && 'board-cell--peer',
           isSameVal && 'board-cell--same-value',

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { api } from '../api'
 
 type Mode = 'casual' | 'ranked'
@@ -11,6 +11,8 @@ interface LobbyOut {
 
 export default function Home() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const notice = (location.state as { notice?: string } | null)?.notice
 
   const [mode, setMode] = useState<Mode>('casual')
   const [difficulty, setDifficulty] = useState<Difficulty>('medium')
@@ -50,7 +52,9 @@ export default function Home() {
   }
 
   return (
-    <div className="home-container">
+    <>
+      {notice && <p className="home-notice">{notice}</p>}
+      <div className="home-container">
       <section className="home-card">
         <h2 className="home-card-title">Create a lobby</h2>
         <form className="home-form" onSubmit={handleCreate}>
@@ -121,6 +125,7 @@ export default function Home() {
           </button>
         </form>
       </section>
-    </div>
+      </div>
+    </>
   )
 }

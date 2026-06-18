@@ -4,13 +4,17 @@ export interface ParticipantProgress {
   cellsCorrect: number
   mistakes: number
   finished: boolean
+  eliminated: boolean
 }
 
 interface OpponentPanelProps {
   participants: ParticipantProgress[]
+  blankCount?: number
 }
 
-export default function OpponentPanel({ participants }: OpponentPanelProps) {
+export default function OpponentPanel({ participants, blankCount = 81 }: OpponentPanelProps) {
+  const givenCount = 81 - blankCount
+
   if (participants.length === 0) {
     return (
       <aside className="opponent-panel">
@@ -24,24 +28,28 @@ export default function OpponentPanel({ participants }: OpponentPanelProps) {
     <aside className="opponent-panel">
       <h2 className="opponent-panel-title">Opponents</h2>
       <ul className="opponent-list">
-        {participants.map((p) => (
-          <li key={p.userId} className="opponent-item">
-            <div className="opponent-header">
-              <span className="opponent-username">{p.username}</span>
-              {p.finished && <span className="opponent-finished-badge">Finished!</span>}
-            </div>
-            <div className="opponent-progress-bar-wrap">
-              <div
-                className="opponent-progress-bar-fill"
-                style={{ width: `${(p.cellsCorrect / 81) * 100}%` }}
-              />
-            </div>
-            <div className="opponent-stats">
-              <span className="opponent-cells">{p.cellsCorrect} / 81 cells</span>
-              <span className="opponent-mistakes">{p.mistakes} mistake{p.mistakes !== 1 ? 's' : ''}</span>
-            </div>
-          </li>
-        ))}
+        {participants.map((p) => {
+          const totalKnown = p.cellsCorrect + givenCount
+          return (
+            <li key={p.userId} className="opponent-item">
+              <div className="opponent-header">
+                <span className="opponent-username">{p.username}</span>
+                {p.finished && <span className="opponent-finished-badge">Finished!</span>}
+                {p.eliminated && !p.finished && <span className="opponent-eliminated-badge">Eliminated</span>}
+              </div>
+              <div className="opponent-progress-bar-wrap">
+                <div
+                  className="opponent-progress-bar-fill"
+                  style={{ width: `${(totalKnown / 81) * 100}%` }}
+                />
+              </div>
+              <div className="opponent-stats">
+                <span className="opponent-cells">{totalKnown} / 81 cells</span>
+                <span className="opponent-mistakes">{p.mistakes} mistake{p.mistakes !== 1 ? 's' : ''}</span>
+              </div>
+            </li>
+          )
+        })}
       </ul>
     </aside>
   )
