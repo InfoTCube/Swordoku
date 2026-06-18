@@ -43,6 +43,16 @@ class MatchHistoryEntry(BaseModel):
     mistakes: int
 
 
+class LeaderboardEntry(BaseModel):
+    rank: int
+    username: str
+    elo_rating: int
+    wins: int
+    losses: int
+
+    model_config = {"from_attributes": True}
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
