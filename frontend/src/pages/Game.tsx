@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import GameBoard from '../components/GameBoard'
+import OpponentPanel from '../components/OpponentPanel'
+import type { ParticipantProgress } from '../components/OpponentPanel'
 
 const EMPTY_GIVENS = new Array(81).fill(0)
 const EMPTY_VALUES = new Array(81).fill(0)
+const NO_OPPONENTS: ParticipantProgress[] = []
 
 export default function Game() {
   const { matchId } = useParams<{ matchId: string }>()
@@ -31,6 +34,7 @@ export default function Game() {
             onCellChange={handleCellChange}
           />
         </div>
+        <OpponentPanel participants={NO_OPPONENTS} />
       </div>
     </div>
   )

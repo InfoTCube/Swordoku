@@ -18,7 +18,7 @@
 | 14 | Home page | ✅ Done | Two-card layout: "Create lobby" (mode + difficulty radio groups → POST /lobbies → redirect /lobby/:code) and "Join lobby" (code/URL input → redirect /lobby/:code); home-* CSS classes in index.css; ProtectedRoute already guards the route |
 | 15 | Lobby waiting room page | ✅ Done | Polls GET /lobbies/{code} every 2s; auto-joins on mount; shows mode/difficulty/players/invite link (copy button); Start button for creator only (2+ players); redirects all clients to /game/:matchId when lobby goes active; FRONTEND_URL config added so invite_url points to the app |
 | 16 | Game board component | ✅ Done | GameBoard component in components/GameBoard.tsx: 81-cell CSS grid, given cells read-only (bold/grey), keyboard 1-9/Backspace input, arrow-key navigation, peer/same-value/conflict/incorrect cell highlighting; game-* and board-* CSS added to index.css; Game.tsx updated to render board with local value state (WS wiring deferred to #18) |
-| 17 | Live opponent progress panel | ⬜ Todo | |
+| 17 | Live opponent progress panel | ✅ Done | OpponentPanel component in components/OpponentPanel.tsx: per-opponent card (username, cells_correct/81, mistakes, progress bar, Finished! badge); opponent-* CSS in index.css; username added to ProgressBroadcast schema + ws.py; Game.tsx updated to render panel with empty placeholder (WS wiring deferred to #18) |
 | 18 | WebSocket game client | ⬜ Todo | |
 | 19 | Profile endpoint & page | ⬜ Todo | |
 | 20 | Leaderboard endpoint & page | ⬜ Todo | |

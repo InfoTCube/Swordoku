@@ -59,6 +59,7 @@ async def match_ws(
 
             broadcast = ProgressBroadcast(
                 user_id=user_id,
+                username=user.username,
                 cells_correct=participant.cells_correct,
                 mistakes=participant.mistakes,
             )
