@@ -56,6 +56,11 @@ export default function GameBoard({
   const peers = selected !== null ? getPeers(selected) : new Set<number>()
   const selectedVal = selected !== null ? display[selected] : 0
 
+  const digitCounts = new Array(10).fill(0)
+  for (let i = 0; i < 81; i++) {
+    if (display[i] !== 0) digitCounts[display[i]]++
+  }
+
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (selected === null) return
 
@@ -80,47 +85,71 @@ export default function GameBoard({
     else if (e.key === 'ArrowRight' && c < 8) { e.preventDefault(); setSelected(selected + 1) }
   }
 
+  function handleNumberPadClick(digit: number) {
+    if (selected === null) return
+    if (givens[selected] !== 0 || correctCells.has(selected)) return
+    onCellChange(selected, digit)
+  }
+
   return (
-    <div
-      className="board"
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
-      onFocus={() => { if (selected === null) setSelected(0) }}
-    >
-      {Array.from({ length: 81 }, (_, i) => {
-        const r = getRow(i)
-        const c = getCol(i)
-        const isGiven = givens[i] !== 0
-        const isCorrect = !isGiven && correctCells.has(i)
-        const isSelected = selected === i
-        const isPeer = !isSelected && peers.has(i)
-        const isSameVal = !isSelected && selectedVal !== 0 && display[i] === selectedVal
-        const isConflict = conflicts.has(i)
-        const isIncorrect = incorrectCells.has(i)
+    <div className="board-with-pad">
+      <div
+        className="board"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onFocus={() => { if (selected === null) setSelected(0) }}
+      >
+        {Array.from({ length: 81 }, (_, i) => {
+          const r = getRow(i)
+          const c = getCol(i)
+          const isGiven = givens[i] !== 0
+          const isCorrect = !isGiven && correctCells.has(i)
+          const isSelected = selected === i
+          const isPeer = !isSelected && peers.has(i)
+          const isSameVal = !isSelected && selectedVal !== 0 && display[i] === selectedVal
+          const isConflict = conflicts.has(i)
+          const isIncorrect = incorrectCells.has(i)
 
-        const cls = [
-          'board-cell',
-          isGiven && 'board-cell--given',
-          isCorrect && 'board-cell--correct',
-          isSelected && 'board-cell--selected',
-          isPeer && 'board-cell--peer',
-          isSameVal && 'board-cell--same-value',
-          isConflict && 'board-cell--conflict',
-          isIncorrect && 'board-cell--incorrect',
-          (c === 2 || c === 5) && 'board-cell--thick-right',
-          (r === 2 || r === 5) && 'board-cell--thick-bottom',
-        ].filter(Boolean).join(' ')
+          const cls = [
+            'board-cell',
+            isGiven && 'board-cell--given',
+            isCorrect && 'board-cell--correct',
+            isSelected && 'board-cell--selected',
+            isPeer && 'board-cell--peer',
+            isSameVal && 'board-cell--same-value',
+            isConflict && 'board-cell--conflict',
+            isIncorrect && 'board-cell--incorrect',
+            (c === 2 || c === 5) && 'board-cell--thick-right',
+            (r === 2 || r === 5) && 'board-cell--thick-bottom',
+          ].filter(Boolean).join(' ')
 
-        return (
-          <div
-            key={i}
-            className={cls}
-            onClick={() => setSelected(i)}
-          >
-            {display[i] !== 0 ? display[i] : ''}
-          </div>
-        )
-      })}
+          return (
+            <div
+              key={i}
+              className={cls}
+              onClick={() => setSelected(i)}
+            >
+              {display[i] !== 0 ? display[i] : ''}
+            </div>
+          )
+        })}
+      </div>
+      <div className="number-pad">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(digit => {
+          const exhausted = digitCounts[digit] >= 9
+          return (
+            <button
+              key={digit}
+              className={`number-pad-btn${exhausted ? ' number-pad-btn--exhausted' : ''}`}
+              onClick={() => handleNumberPadClick(digit)}
+              disabled={exhausted}
+              tabIndex={-1}
+            >
+              {digit}
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }
