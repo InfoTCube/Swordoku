@@ -1,3 +1,4 @@
+import asyncio
 import json
 from collections import defaultdict
 from datetime import timezone
@@ -26,6 +27,8 @@ router = APIRouter()
 
 # match_id → set of eliminated user_ids (in-memory; single-process server)
 _match_eliminated: dict[str, set[str]] = defaultdict(set)
+# per-match lock prevents double-finalization when multiple clients race to end the match
+_match_locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
 
 
 async def _finalize_and_broadcast(
@@ -34,17 +37,28 @@ async def _finalize_and_broadcast(
     match_id: str,
     reason: str,
 ) -> None:
-    eliminated = _match_eliminated.get(match_id, set())
-    participants = get_participants(db, match_id)
-    winner = finalize_match(db, match, participants, reason=reason,
-                            eliminated_user_ids=eliminated or None)
+    lock = _match_locks[match_id]
+    winner = None
     elo_deltas: dict[str, int] | None = None
-    if match.mode == "ranked":
-        elo_deltas = {
-            p.user_id: (p.elo_after - p.elo_before)
-            for p in participants
-            if p.elo_before is not None and p.elo_after is not None
-        }
+
+    async with lock:
+        # Re-fetch match status under the lock so concurrent callers see the
+        # committed state from whichever handler wins the race.
+        db.refresh(match)
+        if match.status == "finished":
+            return
+        eliminated = _match_eliminated.pop(match_id, set())
+        _match_locks.pop(match_id, None)
+        participants = get_participants(db, match_id)
+        winner = finalize_match(db, match, participants, reason=reason,
+                                eliminated_user_ids=eliminated or None)
+        if match.mode == "ranked":
+            elo_deltas = {
+                p.user_id: (p.elo_after - p.elo_before)
+                for p in participants
+                if p.elo_before is not None and p.elo_after is not None
+            }
+
     await manager.broadcast_to_match(match_id, MatchEndBroadcast(
         winner_id=winner.user_id if winner is not None else None,
         reason=reason,
@@ -155,6 +169,7 @@ async def match_ws(
                 mistakes=participant.mistakes,
             ).model_dump())
 
+            db.refresh(match)
             if match.status != "finished":
                 if has_won(participant, blank_count):
                     await _finalize_and_broadcast(db, match, match_id, reason="completed")

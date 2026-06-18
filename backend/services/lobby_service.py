@@ -24,6 +24,11 @@ def create_lobby(db: Session, creator_id: str, mode: str, difficulty: str, time_
         code = _generate_code()
         if not db.query(Lobby).filter(Lobby.code == code).first():
             break
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Could not generate a unique lobby code; please try again",
+        )
 
     lobby = Lobby(code=code, creator_id=creator_id, mode=mode, difficulty=difficulty, time_limit_min=time_limit_min, mistake_limit=mistake_limit)
     db.add(lobby)

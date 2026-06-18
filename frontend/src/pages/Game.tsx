@@ -223,7 +223,7 @@ export default function Game() {
       return
     }
 
-    connRef.current?.send({ cell, value: effectiveValue })
+    connRef.current?.send({ type: 'move', cell, value: effectiveValue })
   }
 
   function getResult(): 'win' | 'loss' | 'draw' {
