@@ -7,8 +7,6 @@ import { connectToMatch } from '../ws'
 import type { WsConnection } from '../ws'
 import { useAuth } from '../context/AuthContext'
 
-const MATCH_DURATION_S = 600
-
 interface MatchEndState {
   winnerId: string | null
   reason: string
@@ -32,11 +30,12 @@ export default function Game() {
   const [correctCells, setCorrectCells] = useState<Set<number>>(new Set())
   const [blankCount, setBlankCount] = useState(81)
   const [myMistakes, setMyMistakes] = useState(0)
+  const [mistakeLimit, setMistakeLimit] = useState(3)
   const [isSelfEliminated, setIsSelfEliminated] = useState(false)
   const [opponents, setOpponents] = useState<ParticipantProgress[]>([])
   const [matchEnd, setMatchEnd] = useState<MatchEndState | null>(null)
   const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
-  const [timeLeft, setTimeLeft] = useState(MATCH_DURATION_S)
+  const [timeLeft, setTimeLeft] = useState(600)
   const [timerStarted, setTimerStarted] = useState(false)
 
   const connRef = useRef<WsConnection | null>(null)
@@ -96,11 +95,16 @@ export default function Game() {
             setBlankCount(bc)
             blankCountRef.current = bc
 
+            const serverTimeLimitS = (msg.time_limit_s as number | undefined) ?? 600
+            setMistakeLimit((msg.mistake_limit as number | undefined) ?? 3)
+
             // Sync timer: calculate remaining time from server's started_at
             const startedAt = msg.started_at as number | null | undefined
             if (startedAt != null) {
               const elapsed = Math.floor(Date.now() / 1000 - startedAt)
-              setTimeLeft(Math.max(0, MATCH_DURATION_S - elapsed))
+              setTimeLeft(Math.max(0, serverTimeLimitS - elapsed))
+            } else {
+              setTimeLeft(serverTimeLimitS)
             }
             setTimerStarted(true)
 
@@ -231,6 +235,7 @@ export default function Game() {
   const result = matchEnd ? getResult() : null
   const eloDelta = matchEnd?.eloDeltas && currentUser ? matchEnd.eloDeltas[currentUser.id] : undefined
   const isUrgent = timeLeft <= 60 && !matchEnd
+  const isMistakeDanger = myMistakes > 0 && myMistakes >= mistakeLimit - 1
 
   return (
     <div className="game-container">
@@ -247,8 +252,8 @@ export default function Game() {
               </div>
             )}
             {!matchEnd && !isSelfEliminated && (
-              <div className={`game-mistakes${myMistakes >= 8 ? ' game-mistakes--danger' : ''}`}>
-                Mistakes: {myMistakes} / 10
+              <div className={`game-mistakes${isMistakeDanger ? ' game-mistakes--danger' : ''}`}>
+                Mistakes: {myMistakes} / {mistakeLimit}
               </div>
             )}
           </div>

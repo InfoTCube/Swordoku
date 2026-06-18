@@ -24,8 +24,6 @@ from backend.services.win_detection import finalize_match, has_won
 
 router = APIRouter()
 
-MISTAKE_LIMIT = 10
-
 # match_id → set of eliminated user_ids (in-memory; single-process server)
 _match_eliminated: dict[str, set[str]] = defaultdict(set)
 
@@ -110,6 +108,8 @@ async def match_ws(
         "mistakes": participant.mistakes,
         "eliminated_user_ids": list(eliminated),
         "started_at": started_at_ts,
+        "time_limit_s": match.time_limit_s,
+        "mistake_limit": match.mistake_limit,
     })
 
     try:
@@ -159,7 +159,7 @@ async def match_ws(
                 if has_won(participant, blank_count):
                     await _finalize_and_broadcast(db, match, match_id, reason="completed")
 
-                elif not is_correct and participant.mistakes >= MISTAKE_LIMIT:
+                elif not is_correct and participant.mistakes >= match.mistake_limit:
                     _match_eliminated[match_id].add(user_id)
                     await manager.broadcast_to_match(match_id, PlayerEliminatedBroadcast(
                         user_id=user_id,

@@ -16,6 +16,8 @@ export default function Home() {
 
   const [mode, setMode] = useState<Mode>('casual')
   const [difficulty, setDifficulty] = useState<Difficulty>('medium')
+  const [timeLimitMin, setTimeLimitMin] = useState(10)
+  const [mistakeLimit, setMistakeLimit] = useState(3)
   const [createLoading, setCreateLoading] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
 
@@ -27,7 +29,7 @@ export default function Home() {
     setCreateError(null)
     setCreateLoading(true)
     try {
-      const res = await api.post<LobbyOut>('/lobbies', { mode, difficulty })
+      const res = await api.post<LobbyOut>('/lobbies', { mode, difficulty, time_limit_min: timeLimitMin, mistake_limit: mistakeLimit })
       navigate(`/lobby/${res.data.code}`)
     } catch (err: unknown) {
       const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail
@@ -95,6 +97,40 @@ export default function Home() {
                   {d.charAt(0).toUpperCase() + d.slice(1)}
                 </label>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="home-fieldset">
+            <legend className="home-legend">Time limit</legend>
+            <div className="home-range-row">
+              <input
+                type="range"
+                min={5}
+                max={25}
+                step={1}
+                value={timeLimitMin}
+                onChange={(e) => setTimeLimitMin(Number(e.target.value))}
+                disabled={createLoading}
+                className="home-range"
+              />
+              <span className="home-range-value">{timeLimitMin} min</span>
+            </div>
+          </fieldset>
+
+          <fieldset className="home-fieldset">
+            <legend className="home-legend">Mistake limit</legend>
+            <div className="home-range-row">
+              <input
+                type="range"
+                min={0}
+                max={10}
+                step={1}
+                value={mistakeLimit}
+                onChange={(e) => setMistakeLimit(Number(e.target.value))}
+                disabled={createLoading}
+                className="home-range"
+              />
+              <span className="home-range-value">{mistakeLimit}</span>
             </div>
           </fieldset>
 

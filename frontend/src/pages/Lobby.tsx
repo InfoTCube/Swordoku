@@ -22,6 +22,8 @@ interface LobbyState {
   status: 'waiting' | 'active'
   players: LobbyMember[]
   match_id: string | null
+  time_limit_min: number
+  mistake_limit: number
 }
 
 const POLL_INTERVAL_MS = 2000
@@ -130,6 +132,8 @@ export default function Lobby() {
         <div className="lobby-meta">
           <span className="lobby-badge">{lobby.mode}</span>
           <span className="lobby-badge">{lobby.difficulty}</span>
+          <span className="lobby-badge">{lobby.time_limit_min} min</span>
+          <span className="lobby-badge">{lobby.mistake_limit} mistakes</span>
           <span className="lobby-code">#{lobby.code}</span>
         </div>
 

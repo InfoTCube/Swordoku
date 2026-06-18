@@ -1,12 +1,14 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class LobbyCreate(BaseModel):
     mode: Literal["casual", "ranked"]
     difficulty: Literal["easy", "medium", "hard"]
+    time_limit_min: int = Field(default=10, ge=5, le=25)
+    mistake_limit: int = Field(default=3, ge=0, le=10)
 
 
 class LobbyMemberOut(BaseModel):
@@ -25,6 +27,8 @@ class LobbyOut(BaseModel):
     status: Literal["waiting", "active"]
     players: list[LobbyMemberOut]
     match_id: str | None
+    time_limit_min: int
+    mistake_limit: int
 
 
 class LobbyStartOut(BaseModel):

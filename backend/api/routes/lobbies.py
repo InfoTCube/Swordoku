@@ -41,6 +41,8 @@ def _build_lobby_out(lobby, members, db: Session) -> LobbyOut:
         status=lobby.status,
         players=players,
         match_id=lobby.match_id,
+        time_limit_min=lobby.time_limit_min,
+        mistake_limit=lobby.mistake_limit,
     )
 
 
@@ -50,7 +52,7 @@ def create_lobby_endpoint(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> LobbyOut:
-    lobby = create_lobby(db, current_user.id, payload.mode, payload.difficulty)
+    lobby = create_lobby(db, current_user.id, payload.mode, payload.difficulty, payload.time_limit_min, payload.mistake_limit)
     members = get_lobby_members(db, lobby.id)
     return _build_lobby_out(lobby, members, db)
 

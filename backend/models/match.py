@@ -21,6 +21,8 @@ class Match(Base):
         default="waiting",
         nullable=False,
     )
+    time_limit_s: Mapped[int] = mapped_column(Integer, default=600, nullable=False)
+    mistake_limit: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     winner_id: Mapped[str | None] = mapped_column(String, ForeignKey("users.id"), nullable=True)
