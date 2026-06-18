@@ -24,5 +24,5 @@
 | 20 | Leaderboard endpoint & page | ✅ Done | GET /leaderboard?limit=50&offset=0 (public, no auth required); LeaderboardEntry schema (rank, username, elo_rating, wins, losses); sorted by elo_rating desc then username asc; frontend table with gold/silver/bronze rank badges, username links to /profile/:username, W/L/win-rate columns, "Load more" pagination (50/page) |
 | 21 | Unit test suite | ✅ Done | pytest suite in backend/tests/; 73 tests across 5 modules (puzzle_generator, elo_service, move_validator, auth_service, win_detection); in-memory SQLite fixture in conftest.py; [tool.pytest.ini_options] added to pyproject.toml |
 | 22 | Docker & docker-compose | ✅ Done | backend/Dockerfile (python:3.11-slim, alembic upgrade head on startup), frontend/Dockerfile (multi-stage node→nginx, custom nginx.conf with API+WS proxy), docker-compose.yml (postgres:16 with healthcheck chain, pgdata volume, DATABASE_URL auto-overridden) |
-| 23 | Seed script & auto-migrations | ⬜ Todo | |
+| 23 | Seed script & auto-migrations | ✅ Done | scripts/seed.py generates 10 puzzles per difficulty (30 total) with retry-until-match classification; idempotent (counts by stored difficulty); Dockerfile CMD already runs alembic upgrade head, now also runs python scripts/seed.py before uvicorn |
 | 24 | README & documentation | ⬜ Todo | |
