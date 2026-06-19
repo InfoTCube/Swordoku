@@ -28,8 +28,8 @@ async def _expire_matches_loop() -> None:
     """
     while True:
         await asyncio.sleep(60)
-        db = SessionLocal()
         try:
+            db = SessionLocal()
             now = datetime.now(timezone.utc)
             active_matches = db.query(Match).filter(Match.status == "active").all()
             for match in active_matches:
