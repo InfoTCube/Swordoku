@@ -51,21 +51,26 @@ def get_user_matches(
         .all()
     )
 
+    if not participations:
+        return []
+
+    match_ids = [match.id for _, match, _ in participations]
+    co_parts = (
+        db.query(MatchParticipant, User)
+        .join(User, User.id == MatchParticipant.user_id)
+        .filter(
+            MatchParticipant.match_id.in_(match_ids),
+            MatchParticipant.user_id != user.id,
+        )
+        .all()
+    )
+    opponents_by_match: dict[str, list[str]] = {}
+    for cp, cu in co_parts:
+        opponents_by_match.setdefault(cp.match_id, []).append(cu.username)
+
     entries: list[MatchHistoryEntry] = []
     for p, match, puzzle in participations:
-        others = (
-            db.query(MatchParticipant)
-            .filter(
-                MatchParticipant.match_id == match.id,
-                MatchParticipant.user_id != user.id,
-            )
-            .all()
-        )
-        opponent_names: list[str] = []
-        for op in others:
-            ou = db.get(User, op.user_id)
-            if ou:
-                opponent_names.append(ou.username)
+        opponent_names = opponents_by_match.get(match.id, [])
 
         if match.winner_id is None:
             result = "draw"

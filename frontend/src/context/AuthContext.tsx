@@ -1,5 +1,5 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { decodeTokenSub } from '../api'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { decodeTokenSub, isTokenExpired, registerLogoutHandler } from '../api'
 
 interface CurrentUser {
   id: string
@@ -19,6 +19,11 @@ function loadStoredUser(): { token: string; user: CurrentUser } | null {
   const token = localStorage.getItem('token')
   const raw = localStorage.getItem('currentUser')
   if (!token || !raw) return null
+  if (isTokenExpired(token)) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('currentUser')
+    return null
+  }
   try {
     return { token, user: JSON.parse(raw) }
   } catch {
@@ -46,6 +51,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null)
     setCurrentUser(null)
   }, [])
+
+  useEffect(() => {
+    registerLogoutHandler(logout)
+  }, [logout])
 
   const value = useMemo(() => ({ token, currentUser, login, logout }), [token, currentUser, login, logout])
 

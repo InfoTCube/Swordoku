@@ -1,4 +1,4 @@
-import random
+import secrets
 import string
 from datetime import datetime, timezone
 
@@ -16,7 +16,7 @@ MAX_LOBBY_SIZE = 4
 
 def _generate_code() -> str:
     chars = string.ascii_uppercase + string.digits
-    return "".join(random.choices(chars, k=6))
+    return "".join(secrets.choice(chars) for _ in range(6))
 
 
 def create_lobby(db: Session, creator_id: str, mode: str, difficulty: str, time_limit_min: int = 10, mistake_limit: int = 3) -> Lobby:

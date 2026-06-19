@@ -21,6 +21,9 @@ class ConnectionManager:
 
     async def broadcast_to_match(self, match_id: str, message: dict) -> None:
         for websocket in list(self.active.get(match_id, [])):
-            await websocket.send_json(message)
+            try:
+                await websocket.send_json(message)
+            except Exception:
+                self.disconnect(match_id, websocket)
 
 manager = ConnectionManager()

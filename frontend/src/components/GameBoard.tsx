@@ -35,6 +35,8 @@ function getConflicts(givens: number[], values: number[]): Set<number> {
         (getRow(i) === getRow(j) || getCol(i) === getCol(j) || getBox(i) === getBox(j))
       ) {
         conflicts.add(i)
+        // Also highlight the conflicting peer if it is also a user-entered cell
+        if (givens[j] === 0 && values[j] !== 0) conflicts.add(j)
         break
       }
     }
@@ -136,7 +138,12 @@ export default function GameBoard({
       </div>
       <div className="number-pad">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(digit => {
-          const exhausted = digitCounts[digit] >= 9
+          const selectedHasDigit =
+            selected !== null &&
+            givens[selected] === 0 &&
+            !correctCells.has(selected) &&
+            values[selected] === digit
+          const exhausted = digitCounts[digit] >= 9 && !selectedHasDigit
           return (
             <button
               key={digit}

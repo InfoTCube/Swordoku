@@ -125,6 +125,24 @@ export default function Game() {
             if (currentUser && eliminatedIds.includes(currentUser.id)) {
               setIsSelfEliminated(true)
             }
+
+            // Populate opponent panel immediately from snapshot (no need to wait for next move)
+            const participantsState = (msg.participants_state as Array<{
+              user_id: string
+              username: string
+              cells_correct: number
+              mistakes: number
+            }> | undefined) ?? []
+            if (participantsState.length > 0) {
+              setOpponents(participantsState.map(p => ({
+                userId: p.user_id,
+                username: p.username,
+                cellsCorrect: p.cells_correct,
+                mistakes: p.mistakes,
+                finished: p.cells_correct >= bc,
+                eliminated: eliminatedIds.includes(p.user_id),
+              })))
+            }
           }
 
           else if (type === 'move_result') {

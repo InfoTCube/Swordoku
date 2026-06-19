@@ -5,7 +5,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class UserCreate(BaseModel):
-    username: Annotated[str, Field(min_length=1, max_length=32)]
+    username: Annotated[str, Field(min_length=1, max_length=32, pattern=r'^[A-Za-z0-9_-]+$')]
     email: EmailStr
     password: Annotated[str, Field(min_length=8, max_length=72)]
 

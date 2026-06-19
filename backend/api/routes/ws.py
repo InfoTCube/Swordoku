@@ -1,7 +1,7 @@
 import asyncio
 import json
 from collections import defaultdict
-from datetime import timezone
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status, Depends
 from sqlalchemy.orm import Session
@@ -70,13 +70,25 @@ async def _finalize_and_broadcast(
 async def match_ws(
     match_id: str,
     websocket: WebSocket,
-    token: str,
     db: Session = Depends(get_db),
 ) -> None:
-    # Accept the handshake first so we can send a proper 1008 close frame on
-    # auth failures — raising WebSocketException before accept() results in the
-    # browser seeing code 1006 (abnormal closure) instead of 1008.
+    # Accept first so we can send a 1008 close frame on auth failures (pre-accept
+    # raises a 1006 abnormal closure the browser can't distinguish from a network error).
     await websocket.accept()
+
+    # Auth via first message payload — avoids token appearing in server access logs,
+    # browser history, and Referer headers (query-string token leakage).
+    try:
+        raw_auth = await asyncio.wait_for(websocket.receive_text(), timeout=10.0)
+        auth_data = json.loads(raw_auth)
+        token = auth_data.get("token") if isinstance(auth_data, dict) else None
+    except Exception:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+
+    if not isinstance(token, str) or not token:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
 
     user_id = decode_access_token(token)
     if user_id is None:
@@ -114,6 +126,18 @@ async def match_ws(
             t = t.replace(tzinfo=timezone.utc)
         started_at_ts = t.timestamp()
 
+    other_participants = [p for p in get_participants(db, match_id) if p.user_id != user_id]
+    participants_state = []
+    for p in other_participants:
+        u = db.get(User, p.user_id)
+        if u:
+            participants_state.append({
+                "user_id": p.user_id,
+                "username": u.username,
+                "cells_correct": p.cells_correct,
+                "mistakes": p.mistakes,
+            })
+
     await websocket.send_json({
         "type": "board_state",
         "givens": puzzle.givens,
@@ -124,6 +148,7 @@ async def match_ws(
         "started_at": started_at_ts,
         "time_limit_s": match.time_limit_s,
         "mistake_limit": match.mistake_limit,
+        "participants_state": participants_state,
     })
 
     try:
@@ -137,7 +162,15 @@ async def match_ws(
 
             if data.get("type") == "time_up":
                 if match.status != "finished":
-                    await _finalize_and_broadcast(db, match, match_id, reason="time_up")
+                    db.refresh(match)
+                    if match.started_at is not None:
+                        started = match.started_at
+                        if started.tzinfo is None:
+                            started = started.replace(tzinfo=timezone.utc)
+                        elapsed_s = (datetime.now(timezone.utc) - started).total_seconds()
+                        # 10-second grace window absorbs clock skew and network latency
+                        if elapsed_s >= match.time_limit_s - 10:
+                            await _finalize_and_broadcast(db, match, match_id, reason="time_up")
                 continue
 
             try:
@@ -174,7 +207,7 @@ async def match_ws(
                 if has_won(participant, blank_count):
                     await _finalize_and_broadcast(db, match, match_id, reason="completed")
 
-                elif not is_correct and participant.mistakes >= match.mistake_limit:
+                elif not is_correct and participant.mistakes > match.mistake_limit:
                     _match_eliminated[match_id].add(user_id)
                     await manager.broadcast_to_match(match_id, PlayerEliminatedBroadcast(
                         user_id=user_id,
