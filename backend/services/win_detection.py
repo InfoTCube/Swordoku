@@ -3,6 +3,7 @@ from itertools import combinations
 
 from sqlalchemy.orm import Session
 
+from backend.models.lobby import Lobby, LobbyMember
 from backend.models.match import Match, MatchParticipant
 from backend.models.user import User
 from backend.services.elo_service import calculate_elo
@@ -128,6 +129,12 @@ def finalize_match(
         if started.tzinfo is None:
             started = started.replace(tzinfo=timezone.utc)
         winner.solve_time_ms = int((match.ended_at - started).total_seconds() * 1000)
+
+    # Free the lobby so its code can be reused and it doesn't accumulate
+    lobby = db.query(Lobby).filter(Lobby.match_id == match.id).first()
+    if lobby:
+        db.query(LobbyMember).filter(LobbyMember.lobby_id == lobby.id).delete()
+        db.delete(lobby)
 
     db.commit()
     db.refresh(match)

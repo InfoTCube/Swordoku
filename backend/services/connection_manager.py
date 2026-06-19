@@ -19,6 +19,15 @@ class ConnectionManager:
         if not conns:
             self.active.pop(match_id, None)
 
+    async def close_match_connections(self, match_id: str) -> None:
+        """Send a normal close frame to every socket for this match then remove them."""
+        for websocket in list(self.active.get(match_id, [])):
+            try:
+                await websocket.close(code=1000)
+            except Exception:
+                pass
+        self.active.pop(match_id, None)
+
     async def broadcast_to_match(self, match_id: str, message: dict) -> None:
         for websocket in list(self.active.get(match_id, [])):
             try:
