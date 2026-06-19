@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sqlalchemy.orm import Session
 
+
 from backend.core.database import SessionLocal
 from backend.models.puzzle import Puzzle
 from backend.services.difficulty_classifier import classify_difficulty
