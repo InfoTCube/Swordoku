@@ -594,13 +594,25 @@ a:hover { text-decoration: underline; }
     font-size: 0.9375rem;
   }
 
+  /* Number pad moves below the board and becomes a 3-column grid */
+  .board-with-pad {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .number-pad {
-    height: calc(9 * 36px + 4px);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: calc(9 * 36px + 2px);
+    height: auto;
+    margin-top: 4px;
   }
 
   .number-pad-btn {
-    width: 32px;
-    font-size: 0.9375rem;
+    width: auto;
+    height: 52px;
+    font-size: 1.375rem;
   }
 }
 
@@ -1192,4 +1204,139 @@ a:hover { text-decoration: underline; }
 .lb-load-more:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+/* ── Burger menu (hidden on desktop, shown on mobile) ── */
+
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  z-index: 201;
+  flex-shrink: 0;
+}
+
+.nav-burger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #111;
+  border-radius: 2px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.nav-burger--open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+.nav-burger--open span:nth-child(2) { opacity: 0; }
+.nav-burger--open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 199;
+}
+
+/* ── Mobile breakpoint (≤640px) ── */
+@media (max-width: 640px) {
+  /* Sticky nav sits above drawer and overlay */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 201;
+  }
+
+  .nav-burger {
+    display: flex;
+  }
+
+  /* Slide-in drawer — off-screen by default */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -260px;
+    bottom: 0;
+    width: 240px;
+    background: #fff;
+    border-left: 1px solid #e5e5e5;
+    flex-direction: column;
+    align-items: stretch;
+    /* padding-top clears the sticky nav height */
+    padding: 4.5rem 1.5rem 2rem;
+    gap: 0;
+    z-index: 200;
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.08);
+    transition: right 0.25s ease;
+    overflow-y: auto;
+  }
+
+  .nav-links--open {
+    right: 0;
+  }
+
+  .nav-links a,
+  .nav-links .btn-link {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 1.0625rem;
+    font-weight: 500;
+  }
+
+  .nav-links .btn-link {
+    color: #b91c1c;
+    font-weight: 600;
+  }
+
+  /* Less wasted vertical space */
+  .main-content {
+    margin: 0.75rem auto;
+  }
+
+  /* Game page: tighter on small screens */
+  .game-container {
+    margin: 0.5rem auto;
+    padding: 0 0.625rem;
+  }
+
+  .game-layout {
+    gap: 0.75rem;
+  }
+
+  /* Match-end overlay fits in viewport */
+  .game-overlay-card {
+    padding: 2rem 1.25rem;
+    min-width: unset;
+    width: min(calc(100vw - 2rem), 320px);
+  }
+
+  /* Leaderboard: scroll horizontally instead of clipping */
+  .lb-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Enforce minimum touch targets on interactive elements */
+  .auth-btn,
+  .home-btn,
+  .lobby-start-btn,
+  .lobby-copy-btn,
+  .profile-load-more,
+  .lb-load-more,
+  .game-overlay-btn {
+    min-height: 44px;
+  }
+
+  .auth-input,
+  .home-input {
+    min-height: 44px;
+  }
 }
