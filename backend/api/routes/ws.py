@@ -64,6 +64,7 @@ async def _finalize_and_broadcast(
         reason=reason,
         elo_deltas=elo_deltas,
     ).model_dump())
+    await manager.close_match_connections(match_id)
 
 
 @router.websocket("/ws/match/{match_id}")
@@ -224,3 +225,9 @@ async def match_ws(
 
     except WebSocketDisconnect:
         manager.disconnect(match_id, websocket)
+
+
+async def expire_match(db: Session, match: Match) -> None:
+    """Finalize a match whose time limit elapsed with no players connected.
+    Called by the background cleanup task in main.py."""
+    await _finalize_and_broadcast(db, match, match.id, reason="time_up")

@@ -75,9 +75,12 @@ export default function Game() {
           if (!unmountedRef.current) {
             setWsStatus('disconnected')
             if (event.code === 1008) {
-              // Match finished, not a participant, or bad token — redirect home
+              // Not a participant, bad token, or match already over
               navigate('/', { state: { notice: 'This game is no longer available — it may have ended or you are not a participant.' } })
-            } else {
+            } else if (event.code !== 1000) {
+              // 1000 = server closed normally after match_end broadcast; overlay
+              // is already showing so don't reconnect or navigate — let the user
+              // click "Back to home" themselves
               setTimeout(() => { if (!unmountedRef.current) connect() }, 3000)
             }
           }
