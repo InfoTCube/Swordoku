@@ -16,7 +16,7 @@ interface OpponentPanelProps {
 function ParticipantRow({ p, givenCount, isYou }: { p: ParticipantProgress; givenCount: number; isYou?: boolean }) {
   const totalKnown = p.cellsCorrect + givenCount
   return (
-    <li key={p.userId} className={`opponent-item${isYou ? ' opponent-item--self' : ''}`}>
+    <li className={`opponent-item${isYou ? ' opponent-item--self' : ''}`}>
       <div className="opponent-header">
         <span className="opponent-username">
           {p.username}

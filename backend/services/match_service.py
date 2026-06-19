@@ -38,11 +38,3 @@ def get_participant(db: Session, match_id: str, user_id: str) -> MatchParticipan
 def get_participants(db: Session, match_id: str) -> list[MatchParticipant]:
     return db.query(MatchParticipant).filter(MatchParticipant.match_id == match_id).all()
 
-def upsert_participant(db: Session, match_id: str, user_id: str) -> MatchParticipant:
-    participant = get_participant(db, match_id, user_id)
-    if participant is None:
-        participant = MatchParticipant(match_id=match_id, user_id=user_id)
-        db.add(participant)
-        db.commit()
-        db.refresh(participant)
-    return participant

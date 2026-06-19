@@ -4,12 +4,7 @@ class ConnectionManager:
     def __init__(self):
         self.active: dict[str, list[WebSocket]] = {}
 
-    async def connect(self, match_id: str, websocket: WebSocket) -> None:
-        await websocket.accept()
-        self.active.setdefault(match_id, []).append(websocket)
-
     def add_connection(self, match_id: str, websocket: WebSocket) -> None:
-        """Register an already-accepted WebSocket without calling accept() again."""
         self.active.setdefault(match_id, []).append(websocket)
 
     def disconnect(self, match_id: str, websocket: WebSocket) -> None:

@@ -12,11 +12,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def register_user(payload: UserCreate, db: Session) -> UserOut:
-    if db.query(User).filter(User.username == payload.username).first():
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already taken")
-    if db.query(User).filter(User.email == payload.email).first():
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
-
     user = User(
         username=payload.username,
         email=payload.email,
