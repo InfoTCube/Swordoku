@@ -8,10 +8,7 @@ from backend.models.match import Match, MatchParticipant
 from backend.models.user import User
 from backend.services.elo_service import calculate_elo
 
-WIN_THRESHOLD = 81
-
-
-def has_won(participant: MatchParticipant, blank_count: int = WIN_THRESHOLD) -> bool:
+def has_won(participant: MatchParticipant, blank_count: int = 81) -> bool:
     """True when the player has correctly filled all blank cells in the puzzle."""
     return participant.cells_correct >= blank_count
 

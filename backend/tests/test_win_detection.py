@@ -4,7 +4,6 @@ from backend.models.match import Match, MatchParticipant
 from backend.models.puzzle import Puzzle
 from backend.models.user import User
 from backend.services.win_detection import (
-    WIN_THRESHOLD,
     determine_winner,
     finalize_match,
     has_won,
@@ -58,23 +57,19 @@ def _seed_db(db, p1_cells=81, p2_cells=50, p1_mistakes=0, p2_mistakes=3, mode="r
 # --- has_won ---
 
 def test_has_won_at_threshold():
-    assert has_won(_participant(cells_correct=WIN_THRESHOLD)) is True
+    assert has_won(_participant(cells_correct=81)) is True
 
 
 def test_has_won_above_threshold():
-    assert has_won(_participant(cells_correct=WIN_THRESHOLD + 1)) is True
+    assert has_won(_participant(cells_correct=82)) is True
 
 
 def test_has_won_one_below_threshold():
-    assert has_won(_participant(cells_correct=WIN_THRESHOLD - 1)) is False
+    assert has_won(_participant(cells_correct=80)) is False
 
 
 def test_has_won_at_zero():
     assert has_won(_participant(cells_correct=0)) is False
-
-
-def test_win_threshold_is_81():
-    assert WIN_THRESHOLD == 81
 
 
 # --- rank_participants ---

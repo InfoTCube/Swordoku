@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 export interface GameBoardProps {
   givens: number[]
@@ -54,8 +54,8 @@ export default function GameBoard({
   const [selected, setSelected] = useState<number | null>(null)
 
   const display = givens.map((g, i) => (g !== 0 ? g : values[i]))
-  const conflicts = getConflicts(givens, values)
-  const peers = selected !== null ? getPeers(selected) : new Set<number>()
+  const conflicts = useMemo(() => getConflicts(givens, values), [givens, values])
+  const peers = useMemo(() => selected !== null ? getPeers(selected) : new Set<number>(), [selected])
   const selectedVal = selected !== null ? display[selected] : 0
 
   const digitCounts = new Array(10).fill(0)

@@ -5,7 +5,7 @@ from backend.core.database import get_db
 from backend.models.user import User
 from backend.schemas.match import MatchCreate, MatchOut
 from backend.services.auth_service import get_current_user
-from backend.services.match_service import create_match, get_match
+from backend.services.match_service import create_match
 from backend.models.puzzle import Puzzle
 
 router = APIRouter(prefix="/matches", tags=["matches"])

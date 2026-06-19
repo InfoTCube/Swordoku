@@ -18,16 +18,16 @@ router = APIRouter(prefix="/lobbies", tags=["lobbies"])
 
 
 def _build_lobby_out(lobby, members, db: Session) -> LobbyOut:
-    players = []
-    for m in members:
-        user = db.get(User, m.user_id)
-        players.append(
-            LobbyMemberOut(
-                user_id=m.user_id,
-                username=user.username if user else "unknown",
-                joined_at=m.joined_at,
-            )
+    user_ids = [m.user_id for m in members]
+    users = {u.id: u for u in db.query(User).filter(User.id.in_(user_ids)).all()}
+    players = [
+        LobbyMemberOut(
+            user_id=m.user_id,
+            username=users[m.user_id].username if m.user_id in users else "unknown",
+            joined_at=m.joined_at,
         )
+        for m in members
+    ]
 
     invite_url = f"{settings.FRONTEND_URL.rstrip('/')}/lobby/{lobby.code}"
 
