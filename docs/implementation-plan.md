@@ -2,7 +2,7 @@
 
 ## Overview
 
-24 tasks across 6 milestones. Each task maps 1:1 to a GitHub issue. Dependency arrows mean "must be complete before starting".
+25 tasks across 6 milestones. Each task maps 1:1 to a GitHub issue. Dependency arrows mean "must be complete before starting".
 
 ---
 
@@ -40,6 +40,9 @@
 └── #22 Docker & docker-compose
     ├── #23 Seed script & auto-migrations
     └── #24 README & documentation
+
+#16 Game board component
+└── #25 Pencil mode (candidate notes)
 ```
 
 ---
@@ -458,6 +461,26 @@ Technical and user documentation in `README.md`.
 
 ---
 
+### Milestone 7 — UX Enhancements
+
+#### #25 · Pencil mode (candidate notes)
+**Labels:** `milestone-7` `frontend`
+
+Add a pencil mode toggle to the game board. In pencil mode, digit keys add/remove small gray candidate numbers inside a cell (up to all 9). Entering a digit in normal mode clears all candidates from that cell.
+
+**Deliverables:**
+- Pencil mode toggle button in the game UI (keyboard shortcut `P` or toolbar button)
+- `candidates: Set<number>[]` state array (81 entries, one per cell) in `GameBoard`
+- In pencil mode: digit key toggles the digit in/out of that cell's candidate set; `Backspace` clears all candidates in the cell
+- In normal mode: placing a digit clears candidates for that cell; `Backspace` clears the cell value (no change to candidates)
+- Candidate numbers rendered as a 3×3 mini-grid of small gray digits inside each cell
+- Candidates are purely client-side — no backend changes required
+- CSS: candidate digits ~40% font size, gray color, visible only when cell has no confirmed value
+
+**Blocked by:** #16
+
+---
+
 ## Summary Table
 
 | # | Title | Milestone | Blocked by | Blocks |
@@ -477,7 +500,7 @@ Technical and user documentation in `README.md`.
 | 13 | Auth pages | M4 | 3, 12 | 14 |
 | 14 | Home page | M4 | 11, 12, 13 | 15 |
 | 15 | Lobby waiting room page | M4 | 11, 12, 14 | 16, 17 |
-| 16 | Game board component | M4 | 12, 15 | 18 |
+| 16 | Game board component | M4 | 12, 15 | 18, 25 |
 | 17 | Live opponent progress panel | M4 | 12, 15 | 18 |
 | 18 | WebSocket game client | M4 | 8, 16, 17 | — |
 | 19 | Profile endpoint & page | M5 | 3, 12 | — |
@@ -486,3 +509,4 @@ Technical and user documentation in `README.md`.
 | 22 | Docker & docker-compose | M6 | 1 | 23, 24 |
 | 23 | Seed script & auto-migrations | M6 | 22, 4, 6 | — |
 | 24 | README & documentation | M6 | 22 | — |
+| 25 | Pencil mode (candidate notes) | M7 | 16 | — |
