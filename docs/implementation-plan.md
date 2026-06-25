@@ -2,7 +2,7 @@
 
 ## Overview
 
-25 tasks across 6 milestones. Each task maps 1:1 to a GitHub issue. Dependency arrows mean "must be complete before starting".
+29 tasks across 7 milestones. Each task maps 1:1 to a GitHub issue. Dependency arrows mean "must be complete before starting".
 
 ---
 
@@ -42,7 +42,15 @@
     └── #24 README & documentation
 
 #16 Game board component
-└── #25 Pencil mode (candidate notes)
+├── #25 Pencil mode (candidate notes)
+│   └── #28 Auto-candidate clearing
+└── #27 Solo practice mode
+
+#18 WebSocket game client
+└── #26 Rematch button
+
+#12 React scaffold
+└── #29 Dark mode
 ```
 
 ---
@@ -481,6 +489,67 @@ Add a pencil mode toggle to the game board. In pencil mode, digit keys add/remov
 
 ---
 
+#### #26 · Rematch button
+**Labels:** `milestone-7` `frontend` `backend`
+
+After a match ends, let both players vote to replay. If both accept, a new match is created with the same settings and both clients are redirected.
+
+**Deliverables:**
+- "Rematch" button on the match-end overlay; clicking sends `{type: "rematch_vote"}` over the existing WS connection
+- Server tracks votes per match; when both players have voted, creates a new match and broadcasts `{type: "rematch_ready", match_id}`
+- Client redirects to the new match on `rematch_ready`
+- After voting, button is replaced with "Waiting for opponent…" text
+- 30-second timeout: if the second vote doesn't arrive, the button disappears
+
+**Blocked by:** #18
+
+---
+
+#### #27 · Solo practice mode
+**Labels:** `milestone-7` `frontend` `backend`
+
+A no-stakes mode where a single player solves a puzzle with no opponent, no timer, and no ELO impact.
+
+**Deliverables:**
+- "Practice" option on the home page (difficulty selector, bypasses lobby entirely)
+- `GET /puzzles/random?difficulty=` endpoint returning a random stored puzzle
+- Practice game page — same `GameBoard` component, no `OpponentPanel`, no WebSocket, no timer
+- No match record saved, no ELO change
+- "New puzzle" button on completion fetches another puzzle at the same difficulty
+
+**Blocked by:** #12, #16
+
+---
+
+#### #28 · Auto-candidate clearing
+**Labels:** `milestone-7` `frontend`
+
+When a digit is confirmed correct in a cell, automatically remove that digit from the candidate sets of all peers (same row, column, and 3×3 box).
+
+**Deliverables:**
+- On every `move_result { correct: true }` response: iterate the 20 peer cells and delete the placed digit from their `candidates` sets in `GameBoard` state
+- Pure client-side change in `GameBoard.tsx` — no backend work required
+- Only clears the specific digit from peers; does not touch other candidates or already-confirmed cells
+
+**Blocked by:** #25
+
+---
+
+#### #29 · Dark mode
+**Labels:** `milestone-7` `frontend`
+
+System-aware dark theme with a manual toggle, persisted across sessions.
+
+**Deliverables:**
+- CSS custom properties for all colours (background, surface, border, text, accent, error, success)
+- `prefers-color-scheme: dark` media query applies dark values automatically on first visit
+- Toggle button in the nav bar; preference saved to `localStorage` and applied on load
+- All pages and components adapt — no hard-coded colour values remain
+
+**Blocked by:** #12
+
+---
+
 ## Summary Table
 
 | # | Title | Milestone | Blocked by | Blocks |
@@ -509,4 +578,8 @@ Add a pencil mode toggle to the game board. In pencil mode, digit keys add/remov
 | 22 | Docker & docker-compose | M6 | 1 | 23, 24 |
 | 23 | Seed script & auto-migrations | M6 | 22, 4, 6 | — |
 | 24 | README & documentation | M6 | 22 | — |
-| 25 | Pencil mode (candidate notes) | M7 | 16 | — |
+| 25 | Pencil mode (candidate notes) | M7 | 16 | 28 |
+| 26 | Rematch button | M7 | 18 | — |
+| 27 | Solo practice mode | M7 | 12, 16 | — |
+| 28 | Auto-candidate clearing | M7 | 25 | — |
+| 29 | Dark mode | M7 | 12 | — |
