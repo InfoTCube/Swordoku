@@ -488,11 +488,44 @@ a:hover { text-decoration: underline; }
   align-items: flex-start;
 }
 
+.board-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
 .number-pad {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  height: calc(9 * 52px + 4px);
+}
+
+.pencil-btn {
+  width: 44px;
+  height: 36px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fff;
+  color: #374151;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.08s, border-color 0.08s;
+  user-select: none;
+}
+
+.pencil-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.pencil-btn--active {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1d4ed8;
 }
 
 .number-pad-btn {
@@ -583,6 +616,28 @@ a:hover { text-decoration: underline; }
   background: #fecaca;
 }
 
+.board-cell-candidates {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+  padding: 1px;
+}
+
+.board-cell-candidate {
+  font-size: 0.5rem;
+  color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.board-cell-candidate--set {
+  color: #9ca3af;
+}
+
 @media (max-width: 560px) {
   .board {
     grid-template-columns: repeat(9, 36px);
@@ -600,11 +655,18 @@ a:hover { text-decoration: underline; }
     align-items: flex-start;
   }
 
+  .board-sidebar {
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    width: calc(9 * 36px + 2px);
+  }
+
   .number-pad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
-    width: calc(9 * 36px + 2px);
+    flex: 1;
     height: auto;
     margin-top: 4px;
   }
@@ -613,6 +675,17 @@ a:hover { text-decoration: underline; }
     width: auto;
     height: 52px;
     font-size: 1.375rem;
+  }
+
+  .pencil-btn {
+    width: 44px;
+    height: 52px;
+    margin-top: 4px;
+    font-size: 1.125rem;
+  }
+
+  .board-cell-candidate {
+    font-size: 0.375rem;
   }
 }
 

@@ -52,6 +52,10 @@ export default function GameBoard({
   onCellChange,
 }: GameBoardProps) {
   const [selected, setSelected] = useState<number | null>(null)
+  const [pencilMode, setPencilMode] = useState(false)
+  const [candidates, setCandidates] = useState<Set<number>[]>(() =>
+    Array.from({ length: 81 }, () => new Set<number>())
+  )
 
   const display = givens.map((g, i) => (g !== 0 ? g : values[i]))
   const conflicts = useMemo(() => getConflicts(givens, values), [givens, values])
@@ -63,18 +67,58 @@ export default function GameBoard({
     if (display[i] !== 0) digitCounts[display[i]]++
   }
 
+  function isCellEditable(i: number): boolean {
+    return givens[i] === 0 && !correctCells.has(i)
+  }
+
+  function toggleCandidate(cell: number, digit: number) {
+    setCandidates(prev => {
+      const next = prev.map(s => new Set(s))
+      if (next[cell].has(digit)) {
+        next[cell].delete(digit)
+      } else {
+        next[cell].add(digit)
+      }
+      return next
+    })
+  }
+
+  function clearCandidates(cell: number) {
+    setCandidates(prev => {
+      const next = prev.map(s => new Set(s))
+      next[cell].clear()
+      return next
+    })
+  }
+
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (selected === null) return
 
-    if (givens[selected] === 0 && !correctCells.has(selected)) {
+    if (e.key === 'p' || e.key === 'P') {
+      e.preventDefault()
+      setPencilMode(m => !m)
+      return
+    }
+
+    if (isCellEditable(selected)) {
       if (e.key >= '1' && e.key <= '9') {
         e.preventDefault()
-        onCellChange(selected, parseInt(e.key))
+        const digit = parseInt(e.key)
+        if (pencilMode) {
+          toggleCandidate(selected, digit)
+        } else {
+          onCellChange(selected, digit)
+          clearCandidates(selected)
+        }
         return
       }
       if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') {
         e.preventDefault()
-        onCellChange(selected, 0)
+        if (pencilMode) {
+          clearCandidates(selected)
+        } else {
+          onCellChange(selected, 0)
+        }
         return
       }
     }
@@ -89,8 +133,13 @@ export default function GameBoard({
 
   function handleNumberPadClick(digit: number) {
     if (selected === null) return
-    if (givens[selected] !== 0 || correctCells.has(selected)) return
-    onCellChange(selected, digit)
+    if (!isCellEditable(selected)) return
+    if (pencilMode) {
+      toggleCandidate(selected, digit)
+    } else {
+      onCellChange(selected, digit)
+      clearCandidates(selected)
+    }
   }
 
   return (
@@ -111,6 +160,8 @@ export default function GameBoard({
           const isSameVal = !isSelected && selectedVal !== 0 && display[i] === selectedVal
           const isConflict = conflicts.has(i)
           const isIncorrect = incorrectCells.has(i)
+          const cellCandidates = candidates[i]
+          const showCandidates = display[i] === 0 && cellCandidates.size > 0
 
           const cls = [
             'board-cell',
@@ -131,31 +182,54 @@ export default function GameBoard({
               className={cls}
               onClick={() => setSelected(i)}
             >
-              {display[i] !== 0 ? display[i] : ''}
+              {showCandidates ? (
+                <div className="board-cell-candidates">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => (
+                    <span
+                      key={d}
+                      className={`board-cell-candidate${cellCandidates.has(d) ? ' board-cell-candidate--set' : ''}`}
+                    >
+                      {d}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                display[i] !== 0 ? display[i] : ''
+              )}
             </div>
           )
         })}
       </div>
-      <div className="number-pad">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(digit => {
-          const selectedHasDigit =
-            selected !== null &&
-            givens[selected] === 0 &&
-            !correctCells.has(selected) &&
-            values[selected] === digit
-          const exhausted = digitCounts[digit] >= 9 && !selectedHasDigit
-          return (
-            <button
-              key={digit}
-              className={`number-pad-btn${exhausted ? ' number-pad-btn--exhausted' : ''}`}
-              onClick={() => handleNumberPadClick(digit)}
-              disabled={exhausted}
-              tabIndex={-1}
-            >
-              {digit}
-            </button>
-          )
-        })}
+      <div className="board-sidebar">
+        <div className="number-pad">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(digit => {
+            const selectedHasDigit =
+              selected !== null &&
+              givens[selected] === 0 &&
+              !correctCells.has(selected) &&
+              values[selected] === digit
+            const exhausted = digitCounts[digit] >= 9 && !selectedHasDigit
+            return (
+              <button
+                key={digit}
+                className={`number-pad-btn${exhausted && !pencilMode ? ' number-pad-btn--exhausted' : ''}`}
+                onClick={() => handleNumberPadClick(digit)}
+                disabled={exhausted && !pencilMode}
+                tabIndex={-1}
+              >
+                {digit}
+              </button>
+            )
+          })}
+        </div>
+        <button
+          className={`pencil-btn${pencilMode ? ' pencil-btn--active' : ''}`}
+          onClick={() => setPencilMode(m => !m)}
+          tabIndex={-1}
+          title="Pencil mode (P)"
+        >
+          ✏
+        </button>
       </div>
     </div>
   )
