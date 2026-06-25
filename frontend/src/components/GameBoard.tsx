@@ -145,7 +145,7 @@ export default function GameBoard({
   return (
     <div className="board-with-pad">
       <div
-        className="board"
+        className={`board${pencilMode ? ' board--pencil' : ''}`}
         tabIndex={0}
         onKeyDown={handleKeyDown}
         onFocus={() => { if (selected === null) setSelected(0) }}
