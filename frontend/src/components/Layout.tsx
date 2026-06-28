@@ -1,11 +1,33 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+
+type Theme = 'light' | 'dark'
+
+function getEffectiveTheme(): Theme {
+  const stored = localStorage.getItem('theme')
+  if (stored === 'light' || stored === 'dark') return stored
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+function applyTheme(theme: Theme) {
+  document.documentElement.setAttribute('data-theme', theme)
+  localStorage.setItem('theme', theme)
+}
 
 export default function Layout() {
   const { currentUser, logout } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [theme, setTheme] = useState<Theme>(getEffectiveTheme)
+
+  useEffect(() => {
+    applyTheme(theme)
+  }, [theme])
+
+  function toggleTheme() {
+    setTheme(t => (t === 'dark' ? 'light' : 'dark'))
+  }
 
   function handleLogout() {
     logout()
@@ -44,6 +66,13 @@ export default function Layout() {
               <Link to="/register" onClick={close}>Register</Link>
             </>
           )}
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
         </div>
       </nav>
       <main className="main-content">
