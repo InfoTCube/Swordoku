@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { api } from '../api'
 
+type PracticeDifficulty = 'easy' | 'medium' | 'hard'
+
 type Mode = 'casual' | 'ranked'
 type Difficulty = 'easy' | 'medium' | 'hard'
 
@@ -23,6 +25,8 @@ export default function Home() {
 
   const [joinCode, setJoinCode] = useState('')
   const [joinError, setJoinError] = useState<string | null>(null)
+
+  const [practiceDifficulty, setPracticeDifficulty] = useState<PracticeDifficulty>('medium')
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
@@ -138,6 +142,35 @@ export default function Home() {
             {createLoading ? 'Creating…' : 'Create lobby'}
           </button>
         </form>
+      </section>
+
+      <section className="home-card">
+        <h2 className="home-card-title">Solo practice</h2>
+        <div className="home-form">
+          <fieldset className="home-fieldset">
+            <legend className="home-legend">Difficulty</legend>
+            <div className="home-radio-group">
+              {(['easy', 'medium', 'hard'] as PracticeDifficulty[]).map((d) => (
+                <label key={d} className="home-radio-label">
+                  <input
+                    type="radio"
+                    name="practice-difficulty"
+                    value={d}
+                    checked={practiceDifficulty === d}
+                    onChange={() => setPracticeDifficulty(d)}
+                  />
+                  {d.charAt(0).toUpperCase() + d.slice(1)}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <button
+            className="home-btn"
+            onClick={() => navigate(`/practice?difficulty=${practiceDifficulty}`)}
+          >
+            Start practice
+          </button>
+        </div>
       </section>
 
       <section className="home-card">
