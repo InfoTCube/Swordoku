@@ -29,5 +29,5 @@
 | 25 | Pencil mode (candidate notes) | ✅ Done | candidates: Set<number>[81] state in GameBoard; pencil toggle button (toolbar + P shortcut); digit keys toggle candidates in pencil mode / clear them on normal-mode entry; Backspace clears candidates in pencil mode; 3×3 mini-grid of gray candidate digits rendered when cell has no confirmed value; exhausted-digit check bypassed in pencil mode; mobile layout: pencil button sits beside the 3-col number pad |
 | 26 | Rematch button | 📋 Planned | — |
 | 27 | Solo practice mode | 📋 Planned | — |
-| 28 | Auto-candidate clearing | 📋 Planned | — |
+| 28 | Auto-candidate clearing | ✅ Done | GameBoard converted to forwardRef; GameBoardHandle exposes clearPeerCandidates(cell, digit); Game.tsx tracks pendingMoveRef and calls clearPeerCandidates on move_result.correct=true; pure client-side, no backend changes |
 | 29 | Dark mode | 📋 Planned | — |
