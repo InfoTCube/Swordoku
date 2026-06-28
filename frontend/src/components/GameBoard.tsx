@@ -1,4 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useImperativeHandle, forwardRef } from 'react'
+
+export interface GameBoardHandle {
+  clearPeerCandidates: (cell: number, digit: number) => void
+}
 
 export interface GameBoardProps {
   givens: number[]
@@ -44,18 +48,29 @@ function getConflicts(givens: number[], values: number[]): Set<number> {
   return conflicts
 }
 
-export default function GameBoard({
+const GameBoard = forwardRef<GameBoardHandle, GameBoardProps>(function GameBoard({
   givens,
   values,
   incorrectCells = new Set(),
   correctCells = new Set(),
   onCellChange,
-}: GameBoardProps) {
+}, ref) {
   const [selected, setSelected] = useState<number | null>(null)
   const [pencilMode, setPencilMode] = useState(false)
   const [candidates, setCandidates] = useState<Set<number>[]>(() =>
     Array.from({ length: 81 }, () => new Set<number>())
   )
+
+  useImperativeHandle(ref, () => ({
+    clearPeerCandidates(cell: number, digit: number) {
+      const peers = getPeers(cell)
+      setCandidates(prev => {
+        const next = prev.map(s => new Set(s))
+        peers.forEach(p => next[p].delete(digit))
+        return next
+      })
+    },
+  }))
 
   const display = givens.map((g, i) => (g !== 0 ? g : values[i]))
   const conflicts = useMemo(() => getConflicts(givens, values), [givens, values])
@@ -233,4 +248,6 @@ export default function GameBoard({
       </div>
     </div>
   )
-}
+})
+
+export default GameBoard

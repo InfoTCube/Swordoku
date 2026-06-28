@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import GameBoard from '../components/GameBoard'
+import GameBoard, { type GameBoardHandle } from '../components/GameBoard'
 import OpponentPanel from '../components/OpponentPanel'
 import type { ParticipantProgress } from '../components/OpponentPanel'
 import { connectToMatch } from '../ws'
@@ -42,6 +42,8 @@ export default function Game() {
   const unmountedRef = useRef(false)
   const blankCountRef = useRef(81)
   const timeUpSentRef = useRef(false)
+  const boardRef = useRef<GameBoardHandle>(null)
+  const pendingMoveRef = useRef<{ cell: number; value: number } | null>(null)
 
   // Countdown timer — starts on first board_state received
   useEffect(() => {
@@ -158,9 +160,14 @@ export default function Game() {
                 next.delete(cell)
                 return next
               })
+              const pending = pendingMoveRef.current
+              if (pending && pending.cell === cell) {
+                boardRef.current?.clearPeerCandidates(cell, pending.value)
+              }
             } else {
               setIncorrectCells(prev => new Set(prev).add(cell))
             }
+            pendingMoveRef.current = null
           }
 
           else if (type === 'progress') {
@@ -244,6 +251,7 @@ export default function Game() {
       return
     }
 
+    pendingMoveRef.current = { cell, value: effectiveValue }
     connRef.current?.send({ type: 'move', cell, value: effectiveValue })
   }
 
@@ -315,6 +323,7 @@ export default function Game() {
       <div className="game-layout">
         <div className="game-board-wrap">
           <GameBoard
+            ref={boardRef}
             givens={givens}
             values={values}
             incorrectCells={incorrectCells}
