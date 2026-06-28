@@ -28,6 +28,6 @@
 | 24 | README & documentation | ✅ Done | Full README: features, stack, quickstart (Docker + local), tests, architecture diagram, folder structure, env vars table, full API reference (HTTP + WS), data model tables |
 | 25 | Pencil mode (candidate notes) | ✅ Done | candidates: Set<number>[81] state in GameBoard; pencil toggle button (toolbar + P shortcut); digit keys toggle candidates in pencil mode / clear them on normal-mode entry; Backspace clears candidates in pencil mode; 3×3 mini-grid of gray candidate digits rendered when cell has no confirmed value; exhausted-digit check bypassed in pencil mode; mobile layout: pencil button sits beside the 3-col number pad |
 | 26 | Rematch button | 📋 Planned | — |
-| 27 | Solo practice mode | 📋 Planned | — |
+| 27 | Solo practice mode | ✅ Done | GET /puzzles/random?difficulty= returns PracticeOut (includes solution); Practice.tsx: fetches puzzle, validates moves locally against solution, detects completion when all blank cells correct, completion overlay with "New puzzle" + "Back to home" buttons; no WebSocket, no timer, no OpponentPanel; Home.tsx: "Solo practice" card with difficulty selector; Create lobby card spans 2 rows so practice and join cards stack beside it |
 | 28 | Auto-candidate clearing | ✅ Done | GameBoard converted to forwardRef; GameBoardHandle exposes clearPeerCandidates(cell, digit); Game.tsx tracks pendingMoveRef and calls clearPeerCandidates on move_result.correct=true; pure client-side, no backend changes |
 | 29 | Dark mode | 📋 Planned | — |

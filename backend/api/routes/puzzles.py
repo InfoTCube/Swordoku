@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from backend.core.database import get_db
 from backend.models.puzzle import Puzzle
 from backend.models.user import User
-from backend.schemas.puzzle import PuzzleOut
+from backend.schemas.puzzle import PracticeOut, PuzzleOut
 from backend.services.auth_service import get_current_user
 from backend.services.difficulty_classifier import Difficulty, classify_difficulty
 from backend.services.puzzle_generator import generate_solved_grid, make_puzzle
@@ -31,6 +32,23 @@ def create_puzzle(
     db.commit()
     db.refresh(puzzle)
     return PuzzleOut.model_validate(puzzle)
+
+
+@router.get("/random", response_model=PracticeOut)
+def get_random_puzzle(
+    difficulty: Difficulty = Query(Difficulty.medium),
+    db: Session = Depends(get_db),
+    _: User = Depends(get_current_user),
+) -> PracticeOut:
+    puzzle = (
+        db.query(Puzzle)
+        .filter(Puzzle.difficulty == difficulty.value)
+        .order_by(func.random())
+        .first()
+    )
+    if puzzle is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No puzzles found for this difficulty")
+    return PracticeOut.model_validate(puzzle)
 
 
 @router.get("/{puzzle_id}", response_model=PuzzleOut)

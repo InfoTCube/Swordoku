@@ -163,8 +163,13 @@ a:hover { text-decoration: underline; }
   margin: 0 auto;
 }
 
+.home-card:first-child {
+  grid-row: span 2;
+}
+
 @media (max-width: 560px) {
   .home-container { grid-template-columns: 1fr; }
+  .home-card:first-child { grid-row: span 1; }
 }
 
 .home-card {
@@ -447,6 +452,68 @@ a:hover { text-decoration: underline; }
   color: #777;
   padding: 2rem 0;
 }
+
+/* Practice page */
+.practice-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.practice-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.practice-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.practice-difficulty {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.practice-progress {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-left: auto;
+}
+
+.practice-loading,
+.practice-error {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.practice-error { color: #b91c1c; }
+
+.practice-board-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.practice-overlay-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.practice-overlay-btn--secondary {
+  background: #6b7280;
+}
+
+.practice-overlay-btn--secondary:hover { opacity: 0.85; }
 
 /* Game page */
 .game-container {

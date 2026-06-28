@@ -7,6 +7,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Lobby from './pages/Lobby'
 import Game from './pages/Game'
+import Practice from './pages/Practice'
 import Profile from './pages/Profile'
 import Leaderboard from './pages/Leaderboard'
 
@@ -24,6 +25,7 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/lobby/:code" element={<Lobby />} />
               <Route path="/game/:matchId" element={<Game />} />
+              <Route path="/practice" element={<Practice />} />
               <Route path="/profile/:username" element={<Profile />} />
             </Route>
           </Route>
